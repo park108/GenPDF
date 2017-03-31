@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>GenPDF Administartion</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <div id="container">
+
+        <!-- Header -->
+        <div id="header">
+            <div id="title">GenPDF Administration: Code 수정</div>
+            <div id="nav">
+                <a href="/admin">Admin</a> > <a href="/admin/code">Code</a> > Edit
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div id="content">
+            <table>
+                <caption>변경 Code 선택</caption>
+                <tr>
+                    <th>Code Set</th>
+                    <th>Code Set Name</th>
+                    <th>Code</th>
+                    <th>Code Name</th>
+                    <th>Not Use</th>
+                </tr>
+                <tr th:each="codeSet : ${codeSet}">
+                    <td th:text="${codeSet.codeSet}"></td>
+                    <td th:text="${codeSet.codeSetName}"></td>
+                    <td th:text="${codeSet.code}"></td>
+                    <td th:text="${codeSet.codeName}"></td>
+                    <td th:text="${codeSet.notUse}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div id="footer">
+
+        </div>
+
+    </div>
+</body>
+</html>

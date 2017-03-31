@@ -1,5 +1,7 @@
 package com.genpdf.quotation;
 
+import com.genpdf.common.CompanyInfo;
+
 import java.util.ArrayList;
 
 public class QuotationHeader {

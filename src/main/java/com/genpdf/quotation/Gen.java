@@ -10,12 +10,13 @@ import java.util.GregorianCalendar;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
+import com.genpdf.common.FormDao;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
-import com.genpdf.Form;
+import com.genpdf.common.Form;
 
 import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
@@ -26,8 +27,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class Gen {
-	
-	public String generate(String org, String presetCode, Quotation quotation) throws IOException {
+
+	public QuotationResponse generate(Form form, Quotation quotation) throws IOException {
 		
 		// Document 생성
 		PDDocument document = new PDDocument();
@@ -42,8 +43,7 @@ public class Gen {
 		// Document 컨텐츠 추가
 		PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-		// Form 정보 생성
-		Form form = new Form(org, presetCode, document, page);
+		form.initialize(document, page);
 	    
 	    float y = 0;
 	    float textWidth = 0;
@@ -346,8 +346,8 @@ public class Gen {
 		System.out.println("Document FilePath = " + filePath);
 
 		form.setFilePath(filePath);
-		
-		return form.getFilePath();
+
+		return new QuotationResponse(form.getFilePath(), "S", "파일을 정상적으로 생성했습니다");
 	}
 	
 	private void setDocumentInfo(PDDocument document, Quotation quotation) {

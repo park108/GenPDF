@@ -1,4 +1,4 @@
-package com.genpdf.quotation;
+package com.genpdf.common;
 
 public class CompanyInfo {
 	

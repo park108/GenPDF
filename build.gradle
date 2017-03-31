@@ -10,15 +10,14 @@ buildscript {
 	}
 }
 
-apply plugin: 'java'
 apply plugin: 'eclipse-wtp'
+apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 apply plugin: 'application'
 
 war {
-	baseName = 'genpdf'
-	version = '0.0.1'
+	baseName = 'ROOT'
 }
 
 mainClassName = 'com.genpdf.GenPdfApplication'
@@ -36,7 +35,13 @@ configurations {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile fileTree(dir: 'lib', include: ['*.jar'])
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile("org.springframework.boot:spring-boot-starter-jdbc")
+	compile("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtime("org.hsqldb:hsqldb")
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+	compile("mysql:mysql-connector-java:5.1.31")
+	compile fileTree(dir: 'lib', include: ['*.jar'])
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
 }

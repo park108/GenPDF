@@ -2,6 +2,9 @@ package com.genpdf.quotation;
 
 import java.io.IOException;
 
+import com.genpdf.common.Form;
+import com.genpdf.common.FormDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class QuotationController {
-	
-	Quotation quotation;
 
-    @RequestMapping(value = "/quotation/get")
+	@Autowired
+	private FormDao formDao;
+
+	private Quotation quotation;
+
+	@RequestMapping(value = "/quotation/get")
     public ResponseEntity<Quotation> getQuotation() {
 
     	if(null == this.quotation) {
@@ -27,16 +33,24 @@ public class QuotationController {
     }
     
     @RequestMapping(value = "/quotation/create", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ResponseEntity<String> createQuotation(@RequestBody GenRequest request) throws IOException {
+    public ResponseEntity<QuotationResponse> createQuotation(@RequestBody QuotationRequest request) throws IOException {
 
 		this.quotation = request.getQuotation();
     	this.quotation.calcTotalAmount();
         
     	System.out.println("Creating Quotation: "+ quotation.getHeader().getSubject() + ", " + quotation.getHeader().getQuotationNumber());
-    	
-    	Gen gen = new Gen();
-    	String filePath = gen.generate(request.getOrg(), request.getPresetCode(), quotation);
-    	
-    	return new ResponseEntity<String>("{\"path\":\"" + filePath + "\"}", HttpStatus.CREATED);
+
+    	Form form = formDao.getForm(request.getOrg(), request.getDocType(), request.getSeq());
+
+	    QuotationResponse response;
+
+	    if(null == form) {
+		    response = new QuotationResponse("", "E", "등록되지 않은 Form 입니다: seq = " + request.getSeq());
+	    }
+	    else {
+		    response = new Gen().generate(form, quotation);
+	    }
+
+	    return new ResponseEntity<QuotationResponse>(response, HttpStatus.CREATED);
     }
 }

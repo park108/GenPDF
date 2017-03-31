@@ -1,4 +1,4 @@
-package com.genpdf;
+package com.genpdf.common;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,19 +10,19 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 public class Form{
 
-	private String fontCode;
+	private String org;
+	private String docType;
+	private int seq;
 
-    PDType0Font font;
-	PDType0Font fontBold;
+	private String description;
+
+	private String fontCode;
 
 	private float fontSizeTitle;
 	private float fontSizeBody;
 	private float fontSizeTableHeader;
 	private float fontSizeTableBody;
 	private float fontSizeFooter;
-	
-	private float pageWidth;
-	private float pageHeight;
 	
 	private float marginLeft;
 	private float marginRight;
@@ -31,62 +31,64 @@ public class Form{
 	
 	private String logoImagePath;
 	private String signImagePath;
+
+	PDType0Font font;
+	PDType0Font fontBold;
+
+	private float pageWidth;
+	private float pageHeight;
+
 	private String filePath;
-	
+
 	public Form() {
 		super();
 	}
-	
-	/**
-	 * Preset 을 통한 Form 생성
-	 * @param org 회사코드
-	 * @param presetCode Preset코드
-	 * @param document PDFBox document object
-	 * @param page PDFBox page object
-	 */
-	public Form(String org, String presetCode, PDDocument document, PDPage page) {
+
+	public Form(String org, String docType, int seq, String description, String fontCode, float fontSizeTitle, float fontSizeBody, float fontSizeTableHeader, float fontSizeTableBody, float fontSizeFooter, float marginLeft, float marginRight, float marginBottom, float marginTop, String logoImagePath, String signImagePath) {
+
 		super();
-		
-		if("1".equals(presetCode)) {
-			
-			setFontCode("2");
 
-			String fontPath = getFontPath(false);
-			String fontPathBold = getFontPath(true);
+		this.org = org;
+		this.docType = docType;
+		this.seq = seq;
+		this.description = description;
+		this.fontCode = fontCode;
+		this.fontSizeTitle = fontSizeTitle;
+		this.fontSizeBody = fontSizeBody;
+		this.fontSizeTableHeader = fontSizeTableHeader;
+		this.fontSizeTableBody = fontSizeTableBody;
+		this.fontSizeFooter = fontSizeFooter;
+		this.marginLeft = marginLeft;
+		this.marginRight = marginRight;
+		this.marginBottom = marginBottom;
+		this.marginTop = marginTop;
+		this.logoImagePath = logoImagePath;
+		this.signImagePath = signImagePath;
+	}
 
-			URL fontUrl = getClass().getResource(fontPath);
-			URL fontBoldUrl = getClass().getResource(fontPathBold);
+	public void initialize(PDDocument document, PDPage page) {
 
-			System.out.println("Font(general) path = " + fontUrl.getPath());
-			System.out.println("Font(bold) path = " + fontBoldUrl.getPath());
+		String fontPath = getFontPath(false);
+		String fontPathBold = getFontPath(true);
 
-			File fontFile = new File(fontUrl.getPath());
-			File fontFileBold = new File(fontBoldUrl.getPath());
-			
-		    try {
-				setFont(PDType0Font.load(document, fontFile));
-			    setFontBold(PDType0Font.load(document, fontFileBold));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		URL fontUrl = getClass().getResource(fontPath);
+		URL fontBoldUrl = getClass().getResource(fontPathBold);
 
-			setFontSizeTitle(30);
-			setFontSizeBody(11);
-			setFontSizeTableHeader(10);
-			setFontSizeTableBody(10);
-			setFontSizeFooter(9);
-			
-			setPageWidth(page.getMediaBox().getWidth());
-			setPageHeight(page.getMediaBox().getHeight());
-			
-			setMarginLeft(30);
-			setMarginRight(30);
-			setMarginBottom(30);
-			setMarginTop(30);
+		System.out.println("Font(general) path = " + fontUrl.getPath());
+		System.out.println("Font(bold) path = " + fontBoldUrl.getPath());
 
-			setLogoImagePath("/images/SK_PNG.png");
-			setSignImagePath("/images/stamp_sample.png");
+		File fontFile = new File(fontUrl.getPath());
+		File fontFileBold = new File(fontBoldUrl.getPath());
+
+	    try {
+			setFont(PDType0Font.load(document, fontFile));
+		    setFontBold(PDType0Font.load(document, fontFileBold));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		setPageWidth(page.getMediaBox().getWidth());
+		setPageHeight(page.getMediaBox().getHeight());
 	}
 
 	public String getFontCode() {

@@ -23,3 +23,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### 사용자 추가 ###
+todo/
