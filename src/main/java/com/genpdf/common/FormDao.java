@@ -4,7 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static java.lang.Math.toIntExact;
 
 @Repository
 public class FormDao {
@@ -14,6 +18,44 @@ public class FormDao {
 
     public FormDao() {
         super();
+    }
+
+    public ArrayList<Form> getFormList(String org) {
+
+        ArrayList<Form> formList = new ArrayList<Form>();
+
+        String sql = "SELECT * FROM form WHERE org = ?";
+
+        Object[] params = new Object[] {org};
+
+        List<Map<String, Object>> result = template.queryForList(sql, params);
+
+        Form form;
+
+        for(Map<String, Object> map : result) {
+
+            form = new Form(org
+                    , (String) map.get("doc_type")
+                    , toIntExact((Long) map.get("seq"))
+                    , (String) map.get("description")
+                    , (String) map.get("font_code")
+                    , (Float) map.get("font_size_title")
+                    , (Float) map.get("font_size_body")
+                    , (Float) map.get("font_size_table_header")
+                    , (Float) map.get("font_size_table_body")
+                    , (Float) map.get("font_size_footer")
+                    , (Float) map.get("margin_left")
+                    , (Float) map.get("margin_right")
+                    , (Float) map.get("margin_bottom")
+                    , (Float) map.get("margin_top")
+                    , (String) map.get("logo_image_path")
+                    , (String) map.get("sign_image_path")
+            );
+
+            formList.add(form);
+        }
+
+        return formList;
     }
 
     public Form getForm(String org, String docType, int seq) {
