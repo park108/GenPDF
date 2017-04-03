@@ -23,7 +23,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/admin">Home</a></li>
-                <li class="active"><a href="#">Code</a></li>
+                <li class="active"><a href="/admin/code">Code</a></li>
                 <li><a href="/admin/form">Form</a></li>
             </ul>
         </div>
@@ -36,19 +36,30 @@
         <h1>Code 관리</h1>
     </div>
 
+    <form th:action="@{'/admin/code/' + ${code.codeSet} + '/' + ${code.code}}" th:object="${code}" method="post">
+
     <table class="table table-striped">
-        <caption>변경 Code Set 선택</caption>
+        <caption th:text="'Code Set: ' + ${code.codeSet} + ' - ' + ${code.codeSetName}" />
         <tr>
-            <th>Code Set</th>
-            <th>Code Set Name</th>
+            <th>Code</th>
+            <td><input type="text" th:field="*{code}" th:disabled="true" /></td>
         </tr>
-        <tr th:each="codeSet : ${codeSet}">
-            <td>
-                <a th:href="@{'/admin/code/' + ${codeSet.codeSet}}" th:text="${codeSet.codeSet}" />
-            </td>
-            <td th:text="${codeSet.codeSetName}"></td>
+        <tr>
+            <th>Code Name</th>
+            <td><input type="text" th:field="*{codeName}" /></td>
+        </tr>
+        <tr>
+            <th>Is not use</th>
+            <td><input type="checkbox" th:field="*{notUse}" /></td>
         </tr>
     </table>
+
+    <div class="starter-template">
+        <input type="button" value="Back" class="btn btn-sm btn-warning" onclick="history.back()" />
+        <input type="submit" value="Save" class="btn btn-sm btn-success" />
+    </div>
+
+    </form>
 
 </div>
 

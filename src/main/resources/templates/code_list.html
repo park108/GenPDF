@@ -23,7 +23,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/admin">Home</a></li>
-                <li class="active"><a href="#">Code</a></li>
+                <li class="active"><a href="/admin/code">Code</a></li>
                 <li><a href="/admin/form">Form</a></li>
             </ul>
         </div>
@@ -36,19 +36,39 @@
         <h1>Code 관리</h1>
     </div>
 
+    <div class="alert alert-success" role="alert" th:if="${result} != null">
+        <strong th:text="${message}" />
+    </div>
+
     <table class="table table-striped">
-        <caption>변경 Code Set 선택</caption>
+        <caption th:text="'Code Set: ' + ${codeSet} + ' - ' + ${codeSetName}" />
         <tr>
-            <th>Code Set</th>
-            <th>Code Set Name</th>
+            <th></th>
+            <th>Code</th>
+            <th>Code Name</th>
+            <th>Not Use</th>
         </tr>
-        <tr th:each="codeSet : ${codeSet}">
+        <tr th:each="codeList : ${codeList}">
             <td>
-                <a th:href="@{'/admin/code/' + ${codeSet.codeSet}}" th:text="${codeSet.codeSet}" />
+                <a th:href="@{'/admin/code/' + ${codeList.codeSet} + '/' + ${codeList.code}}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a href="#">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
             </td>
-            <td th:text="${codeSet.codeSetName}"></td>
+            <td>
+                <a th:href="@{'/admin/code/' + ${codeList.codeSet} + '/' + ${codeList.code}}" th:text="${codeList.code}" />
+            </td>
+            <td th:text="${codeList.codeName}"></td>
+            <td><input type="checkbox" th:checked="${codeList.notUse}" th:disabled="true" /></td>
         </tr>
     </table>
+
+    <div class="starter-template">
+        <input type="button" value="Back" class="btn btn-sm btn-warning" onclick="history.back()" />
+        <a href="#"><input type="button" value="Code 추가" class="btn btn-sm btn-primary" /></a>
+    </div>
 
 </div>
 

@@ -77,6 +77,46 @@ public class CodeDao {
         return codeList;
     }
 
+	public Code getCodeSet(String codeSet) {
+
+		Code returnCode = null;
+
+		String sql = "SELECT code_set.code_set" +
+				", code_set.code_set_name" +
+				" FROM code INNER JOIN code_set " +
+				" ON code_set.code_set = code.code_set" +
+				" WHERE code_set.code_set = ?";
+
+		Object[] params = new Object[] {codeSet};
+
+		Map result = template.queryForMap(sql, params);
+
+		if(null != result) {
+
+			returnCode = new Code((String) result.get("code_set")
+					, (String) result.get("code_set_name")
+					, null
+					, null
+					, null
+			);
+		}
+
+		return returnCode;
+	}
+
+	public int setCodeSet(Code code) {
+
+		String sql = "INSERT INTO code_set VALUES (?,?) " +
+				"ON DUPLICATE KEY UPDATE " +
+				"code_set_name = ?";
+
+		Object[] params = new Object[] {code.getCodeSet(), code.getCodeSetName(), code.getCodeSetName()};
+
+		int result = template.update(sql, params);
+
+		return result;
+	}
+
     public Code getCode(String codeSet, String code) {
 
 		Code returnCode = null;
@@ -110,20 +150,28 @@ public class CodeDao {
 
     public int setCode(Code code) {
 
-	    String sql = "INSERT INTO code VALUES (?,?,?,?) " +
+		System.out.println(
+				"Selected Code : " + code.getCodeSet()
+				+ ", " + code.getCode()
+				+ ", " + code.getCodeName()
+				+ ", " + code.getNotUse()
+		);
+
+	    String sql = "INSERT INTO code VALUES (?, ?, ?, ?) " +
 				    "ON DUPLICATE KEY UPDATE " +
 				    "code_name = ?" +
 				    ", is_not_use = ?";
 
-	    Object[] params = new Object[] {code.getCodeSet()
+	    Object[] params = new Object[] {
+			    code.getCodeSet()
 			    , code.getCode()
-			    , code.getCodeName()
+	    		, code.getCodeName()
 			    , code.getNotUse()
 			    , code.getCodeName()
 			    , code.getNotUse()};
 
-	    SqlRowSet result = template.queryForRowSet(sql, params);
+	    int result = template.update(sql, params);
 
-	    return result.getRow();
+	    return result;
     }
 }
