@@ -44,48 +44,14 @@ public class CodeDao {
 	    return codeList;
     }
 
-    public ArrayList<Code> getCodeList(String codeSet) {
-
-	    ArrayList<Code> codeList = new ArrayList<Code>();
-		String sql = "SELECT code_set.code_set" +
-				    ", code_set.code_set_name" +
-				    ", code.code" +
-				    ", code.code_name" +
-				    ", code.is_not_use" +
-				    " FROM code INNER JOIN code_set " +
-				    " ON code_set.code_set = code.code_set" +
-				    " WHERE code_set.code_set = ?";
-		Object[] params = new Object[] {codeSet};
-
-	    List<Map<String, Object>> result = template.queryForList(sql, params);
-
-	    Code code;
-
-	    for(Map<String, Object> map : result) {
-
-		    code = new Code(
-				    (String) map.get("code_set")
-				    , (String) map.get("code_set_name")
-				    , (String) map.get("code")
-				    , (String) map.get("code_name")
-				    , (Boolean) map.get("is_not_use")
-		    );
-
-		    codeList.add(code);
-	    }
-
-        return codeList;
-    }
-
 	public Code getCodeSet(String codeSet) {
 
 		Code returnCode = null;
 
-		String sql = "SELECT code_set.code_set" +
-				", code_set.code_set_name" +
-				" FROM code INNER JOIN code_set " +
-				" ON code_set.code_set = code.code_set" +
-				" WHERE code_set.code_set = ?";
+		String sql = "SELECT code_set" +
+				", code_set_name" +
+				" FROM code_set " +
+				" WHERE code_set = ?";
 
 		Object[] params = new Object[] {codeSet};
 
@@ -115,6 +81,39 @@ public class CodeDao {
 		int result = template.update(sql, params);
 
 		return result;
+	}
+
+	public ArrayList<Code> getCodeList(String codeSet) {
+
+		ArrayList<Code> codeList = new ArrayList<Code>();
+		String sql = "SELECT code_set.code_set" +
+				", code_set.code_set_name" +
+				", code.code" +
+				", code.code_name" +
+				", code.is_not_use" +
+				" FROM code INNER JOIN code_set " +
+				" ON code_set.code_set = code.code_set" +
+				" WHERE code_set.code_set = ?";
+		Object[] params = new Object[] {codeSet};
+
+		List<Map<String, Object>> result = template.queryForList(sql, params);
+
+		Code code;
+
+		for(Map<String, Object> map : result) {
+
+			code = new Code(
+					(String) map.get("code_set")
+					, (String) map.get("code_set_name")
+					, (String) map.get("code")
+					, (String) map.get("code_name")
+					, (Boolean) map.get("is_not_use")
+			);
+
+			codeList.add(code);
+		}
+
+		return codeList;
 	}
 
     public Code getCode(String codeSet, String code) {

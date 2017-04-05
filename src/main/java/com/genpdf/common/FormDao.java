@@ -91,4 +91,60 @@ public class FormDao {
 
         return form;
     }
+
+    public int setForm(Form form) {
+
+        String sql = "INSERT INTO code VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "description = ?" +
+                ", font_code = ?" +
+                ", font_size_title = ?" +
+                ", font_size_body = ?" +
+                ", font_size_table_header = ?" +
+                ", font_size_table_body = ?" +
+                ", font_size_footer = ?" +
+                ", margin_left = ?" +
+                ", margin_right = ?" +
+                ", margin_bottom = ?" +
+                ", margin_top = ?" +
+                ", logo_image_path = ?" +
+                ", sign_image_path = ?";
+
+        Object[] params = new Object[] {
+                form.getOrg()
+                , form.getDocType()
+                , form.getSeq()
+                , form.getDescription()
+                , form.getFontCode()
+                , form.getFontSizeTitle()
+                , form.getFontSizeBody()
+                , form.getFontSizeTableHeader()
+                , form.getFontSizeTableBody()
+                , form.getFontSizeFooter()
+                , form.getMarginLeft()
+                , form.getMarginRight()
+                , form.getMarginBottom()
+                , form.getMarginTop()
+                , form.getLogoImagePath()
+                , form.getSignImagePath()
+
+                , form.getDescription()
+                , form.getFontCode()
+                , form.getFontSizeTitle()
+                , form.getFontSizeBody()
+                , form.getFontSizeTableHeader()
+                , form.getFontSizeTableBody()
+                , form.getFontSizeFooter()
+                , form.getMarginLeft()
+                , form.getMarginRight()
+                , form.getMarginBottom()
+                , form.getMarginTop()
+                , form.getLogoImagePath()
+                , form.getSignImagePath()
+        };
+
+        int result = template.update(sql, params);
+
+        return result;
+    }
 }
