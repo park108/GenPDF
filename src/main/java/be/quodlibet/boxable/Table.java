@@ -341,7 +341,7 @@ public abstract class Table<T extends PDPage> {
 				cursorY = yStart - cell.getTopPadding()
 						- (cell.getTopBorder() == null ? 0 : cell.getTopBorder().getWidth());
 
-				// image cell vertical alignment
+				// images cell vertical alignment
 				switch (cell.getValign()) {
 				case TOP:
 					break;
@@ -355,7 +355,7 @@ public abstract class Table<T extends PDPage> {
 
 				cursorX += cell.getLeftPadding() + (cell.getLeftBorder() == null ? 0 : cell.getLeftBorder().getWidth());
 
-				// image cell horizontal alignment
+				// images cell horizontal alignment
 				switch (cell.getAlign()) {
 				case CENTER:
 					cursorX += cell.getHorizontalFreeSpace() / 2;

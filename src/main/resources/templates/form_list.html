@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Form - GenPDF Administartion</title>
+    <title th:text="${title} + ' - GenPDF Administartion'"></title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -24,13 +24,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/admin">GenPDF</a>
+            <a class="navbar-brand" href="/admin/">GenPDF</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/admin/">Home</a></li>
-                <li><a href="/admin/code/list/">Code</a></li>
-                <li class="active"><a href="#">Form</a></li>
+                <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
             </ul>
         </div>
     </div>
@@ -40,7 +40,7 @@
 
     <!-- Title -->
     <div class="starter-template">
-        <h1>Form</h1>
+        <h1 th:text="${title}"></h1>
         <p class="lead">- <span th:text="${org}" /></p>
     </div>
 
@@ -70,11 +70,9 @@
     <table class="table table-striped">
         <tr>
             <th></th>
-            <th>Document Type</th>
-            <th>Sequence</th>
+            <th>Type</th>
+            <th>No.</th>
             <th>Description</th>
-            <th>Font</th>
-            <th>Title Logo</th>
         </tr>
         <tr th:each="formList : ${formList}">
             <td>
@@ -82,15 +80,21 @@
                     <span class="glyphicon glyphicon-trash"></span>
                 </a>
             </td>
-            <td th:text="${formList.docType}"></td>
+            <td>
+                <select type="text" disabled="disabled">
+                    <option th:each="docTypeCode : ${documentTypes}"
+                            th:value="${docTypeCode.code}"
+                            th:text="${docTypeCode.codeName}"
+                            th:attr="selected=${formList.docType}==${docTypeCode.code}?'true':'false'"
+                    />
+                </select>
+            </td>
             <td th:text="${formList.seq}"></td>
             <td>
                 <a th:href="@{'/admin/form/' + ${formList.org} + '/' + ${formList.docType} + '/' + ${formList.seq} + '/edit/' }">
                     <span th:text="${formList.description}" />
                 </a>
             </td>
-            <td th:text="${formList.fontCode}"></td>
-            <td><img th:src="${formList.logoImagePath}" style="height: 30px;" /></td>
         </tr>
     </table>
 

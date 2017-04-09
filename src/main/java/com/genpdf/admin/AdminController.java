@@ -9,12 +9,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 @Controller
 public class AdminController {
+
+	private static final String FILE_DIR = "/images/";
+	private static final String STATIC_DIR = "/static/images/";
 
 	@Autowired
 	private CodeDao codeDao;
@@ -22,8 +32,10 @@ public class AdminController {
 	@Autowired
 	private FormDao formDao;
 
-    @GetMapping(value = "/admin")
+	@GetMapping(value = "/admin")
     public String main(Model model) {
+
+	    model.addAttribute("title", "Home");
 
 	    return "admin";
     }
@@ -34,6 +46,7 @@ public class AdminController {
     @GetMapping(value = "/admin/code/list")
 	public String codeSetList(Model model) {
 
+    	model.addAttribute("title", "Code");
 	    model.addAttribute("codeSet", codeDao.getCodeSetList());
 
 	    return "code_set_list";
@@ -42,6 +55,7 @@ public class AdminController {
     @GetMapping(value = "/admin/code/create")
     public String codeSetCreate(Model model) {
 
+	    model.addAttribute("title", "Code");
 	    model.addAttribute("codeSet", new Code());
 
     	return "code_set_detail";
@@ -52,6 +66,7 @@ public class AdminController {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
 
+		model.addAttribute("title", "Code");
 		model.addAttribute("codeSet", selectedCodeSet);
 
 		return "code_set_detail";
@@ -76,6 +91,17 @@ public class AdminController {
 		return "redirect:/admin/code/list/";
 	}
 
+	@PostMapping(value = "/admin/code/{codeSet}/delete")
+	public String codeSetDelete(@PathVariable String codeSet, final RedirectAttributes redirectAttributes) {
+
+		int result = codeDao.delCodeSet(codeSet);
+
+		redirectAttributes.addFlashAttribute("result", "S");
+		redirectAttributes.addFlashAttribute("message", "Delete Successfully!");
+
+		return "redirect:/admin/code/list/";
+	}
+
 	/******************************************************************
 	 /* Code CRUD
 	 ******************************************************************/
@@ -84,6 +110,7 @@ public class AdminController {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
 
+		model.addAttribute("title", "Code");
 		model.addAttribute("codeSet", selectedCodeSet);
 		model.addAttribute("codeList", codeDao.getCodeList(codeSet));
 
@@ -95,6 +122,7 @@ public class AdminController {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
 
+		model.addAttribute("title", "Code");
 		model.addAttribute("codeSet", selectedCodeSet);
 		model.addAttribute("code", new Code());
 
@@ -107,6 +135,7 @@ public class AdminController {
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
 		Code selectedCode = codeDao.getCode(codeSet, code);
 
+		model.addAttribute("title", "Code");
 		model.addAttribute("codeSet", selectedCodeSet);
 		model.addAttribute("code", selectedCode);
 
@@ -126,10 +155,21 @@ public class AdminController {
 
 		int result = codeDao.setCode(code);
 
-		redirectAttributes.addFlashAttribute("result", result);
+		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
 		return "redirect:/admin/code/" + code.getCodeSet() + "/list/";
+	}
+
+	@PostMapping(value = "/admin/code/{codeSet}/{code}/delete")
+	public String codeDelete(@PathVariable String codeSet, @PathVariable String code, final RedirectAttributes redirectAttributes) {
+
+		int result = codeDao.delCode(codeSet, code);
+
+		redirectAttributes.addFlashAttribute("result", "S");
+		redirectAttributes.addFlashAttribute("message", "Delete Successfully!");
+
+		return "redirect:/admin/code/" + codeSet + "/list/";
 	}
 
 	/******************************************************************
@@ -139,8 +179,11 @@ public class AdminController {
 	public String formMain(Model model) {
 
 		// TODO: org 값을 사용자 정보(Session)에서 가져와야 함
+		model.addAttribute("title", "Form");
 		model.addAttribute("org", "SKCC");
     	model.addAttribute("formList", formDao.getFormList("SKCC"));
+		model.addAttribute("documentTypes", codeDao.getCodeList("F001"));
+		model.addAttribute("fonts", codeDao.getCodeList("F002"));
 
     	return "form_list";
 	}
@@ -151,7 +194,10 @@ public class AdminController {
 		Form newForm = new Form();
 		newForm.setOrg(org);
 
+		model.addAttribute("title", "Form");
 		model.addAttribute("form", newForm);
+		model.addAttribute("documentTypes", codeDao.getCodeList("F001"));
+		model.addAttribute("fonts", codeDao.getCodeList("F002"));
 
 		return "form_detail";
 	}
@@ -161,13 +207,19 @@ public class AdminController {
 
 		Form selectedForm = formDao.getForm(org, docType, seq);
 
+		model.addAttribute("title", "Form");
 		model.addAttribute("form", selectedForm);
+		model.addAttribute("documentTypes", codeDao.getCodeList("F001"));
+		model.addAttribute("fonts", codeDao.getCodeList("F002"));
 
 		return "form_detail";
 	}
 
 	@PostMapping(value = "/admin/form/{org}/{docType}/{seq}/save")
-	public String codeSave(@Valid Form form, BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+	public String formSave(@Valid Form form, BindingResult bindingResult
+			, @RequestParam("logoImage") MultipartFile logoImage
+			, @RequestParam("signImage") MultipartFile signImage
+			, final RedirectAttributes redirectAttributes) {
 
 		if(bindingResult.hasErrors()) {
 
@@ -177,11 +229,49 @@ public class AdminController {
 			return "form_detail";
 		}
 
+		try {
+			String realPath = getClass().getResource(FILE_DIR).getPath();
+			String staticPath = getClass().getResource(STATIC_DIR).getPath();
+
+			String logoImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_logo.image";
+			String signImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_sign.image";
+
+			form.setLogoImagePath(FILE_DIR + logoImageName);
+			form.setSignImagePath(FILE_DIR + signImageName);
+
+			byte[] bytes;
+			Path path;
+
+			if(!logoImage.isEmpty()) {
+				bytes = logoImage.getBytes();
+				path = Paths.get(realPath + logoImageName);
+				Files.write(path, bytes);
+				path = Paths.get(staticPath + logoImageName);
+				Files.write(path, bytes);
+			}
+
+			if(!signImage.isEmpty()) {
+				bytes = signImage.getBytes();
+				path = Paths.get(realPath + signImageName);
+				Files.write(path, bytes);
+				path = Paths.get(staticPath + signImageName);
+				Files.write(path, bytes);
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+
+			redirectAttributes.addFlashAttribute("result", "E");
+			redirectAttributes.addFlashAttribute("message", "File upload error!");
+
+			return "redirect:/admin/form/list/";
+		}
+
 		int result = formDao.setForm(form);
 
-		redirectAttributes.addFlashAttribute("result", result);
+		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
-		return "redirect:/admin/form/" + form.getOrg() + "/list/";
+		return "redirect:/admin/form/list/";
 	}
 }

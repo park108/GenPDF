@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home - GenPDF Administartion</title>
+    <title>GenPDF Administartion</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -14,47 +14,47 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/admin/">GenPDF</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="/admin/code/list/">Code</a></li>
-                    <li><a href="/admin/form/list/">Form</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-
-        <div class="starter-template">
-            <h1>GenPDF Administration</h1>
-            <p class="lead">Hi~<br />GenPDF 관리자 화면입니다</p>
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/admin/">GenPDF</a>
         </div>
-
-        <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/code/list/'">
-            <span class="glyphicon glyphicon-menu-right pull-left"></span>
-            <span style="padding-left: 5px">Code</span>
-        </button>
-        <br />
-        <br />
-        <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/form/list/'">
-            <span class="glyphicon glyphicon-menu-right pull-left"></span>
-            <span style="padding-left: 5px">Form</span>
-        </button>
-
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
+            </ul>
+        </div>
     </div>
+</nav>
+
+
+<div class="container">
+
+    <div class="starter-template">
+        <h1>GenPDF Administration</h1>
+        <p class="lead">Hi~<br />GenPDF 관리자 화면입니다</p>
+    </div>
+
+    <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/code/list/'">
+        <span class="glyphicon glyphicon-menu-right pull-left"></span>
+        <span style="padding-left: 5px">Code</span>
+    </button>
+    <br />
+    <br />
+    <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/form/list/'">
+        <span class="glyphicon glyphicon-menu-right pull-left"></span>
+        <span style="padding-left: 5px">Form</span>
+    </button>
+
+</div>
 
 </body>
 </html>

@@ -24,3 +24,7 @@ body {
 .theme-showcase .navbar .container {
     width: auto;
 }
+
+input[type=number] {
+    text-align:right;
+}

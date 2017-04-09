@@ -58,7 +58,7 @@ public class Row<T extends PDPage> {
 
 	/**
 	 * <p>
-	 * Creates a image cell with provided width and {@link Image}
+	 * Creates a images cell with provided width and {@link Image}
 	 * </p>
 	 * 
 	 * @param width

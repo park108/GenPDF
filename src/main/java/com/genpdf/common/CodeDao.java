@@ -83,6 +83,17 @@ public class CodeDao {
 		return result;
 	}
 
+	public int delCodeSet(String codeSet) {
+
+		String sql = "DELETE FROM code_set WHERE code_set = ?";
+
+		Object[] params = new Object[] {codeSet};
+
+		int result = template.update(sql, params);
+
+		return result;
+	}
+
 	public ArrayList<Code> getCodeList(String codeSet) {
 
 		ArrayList<Code> codeList = new ArrayList<Code>();
@@ -173,4 +184,15 @@ public class CodeDao {
 
 	    return result;
     }
+
+	public int delCode(String codeSet, String code) {
+
+		String sql = "DELETE FROM code WHERE code_set = ? AND code = ?";
+
+		Object[] params = new Object[] {codeSet, code};
+
+		int result = template.update(sql, params);
+
+		return result;
+	}
 }

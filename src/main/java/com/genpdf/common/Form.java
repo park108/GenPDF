@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
+import jdk.nashorn.internal.objects.annotations.Property;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.springframework.web.multipart.MultipartFile;
 
 public class Form{
 
@@ -28,7 +31,7 @@ public class Form{
 	private float marginRight;
 	private float marginBottom;
 	private float marginTop;
-	
+
 	private String logoImagePath;
 	private String signImagePath;
 

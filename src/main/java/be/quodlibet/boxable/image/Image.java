@@ -58,10 +58,10 @@ public class Image {
 	 * @param stream
 	 *            {@link PDPageContentStream} where drawing will be applied
 	 * @param x
-	 *            X coordinate for image drawing
+	 *            X coordinate for images drawing
 	 * @param y
-	 *            Y coordinate for image drawing
-	 * @throws IOException if loading image fails
+	 *            Y coordinate for images drawing
+	 * @throws IOException if loading images fails
 	 */
 	public void draw(final PDDocument doc, final PDPageContentStream stream, float x, float y) throws IOException {
 		PDImageXObject imageXObject = LosslessFactory.createFromImage(doc, image);

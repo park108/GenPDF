@@ -66,7 +66,7 @@ public class Gen {
 		System.out.println("Logo Image path = " + logoImageUrl.getPath());
 		Image imageLogo = new Image(ImageIO.read(new File(logoImageUrl.getPath())));
 
-		float logoHeight = 60;
+		float logoHeight = 50;
 		imageLogo = imageLogo.scaleByHeight(logoHeight);
 		imageLogo.draw(document, contentStream, form.getMarginLeft(), y);
 		

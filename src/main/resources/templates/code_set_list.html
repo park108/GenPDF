@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Code - GenPDF Administartion</title>
+    <title th:text="${title} + ' - GenPDF Administartion'"></title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/starter-template.css" />
     <script src="/js/jquery-3.2.0.min.js" />
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="/js/code_set_list.js" />
+    <script src="/js/code_set.js" />
 </head>
 <body>
 
@@ -26,11 +26,11 @@
             </button>
             <a class="navbar-brand" href="/admin/">GenPDF</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/admin/">Home</a></li>
-                <li class="active"><a href="#">Code</a></li>
-                <li><a href="/admin/form/list/">Form</a></li>
+                <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
             </ul>
         </div>
     </div>
@@ -40,7 +40,7 @@
 
     <!-- Title -->
     <div class="starter-template">
-        <h1>Code</h1>
+        <h1 th:text="${title}"></h1>
         <p class="lead">- Code Set</p>
     </div>
 
@@ -108,8 +108,16 @@
                 <p>Delete <span id="code"></span>. Are you sure?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <form id="deleteForm" action="" method="post">
+                    <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash pull-left"></span>
+                        <span style="padding-left: 5px">Delete</span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove pull-left"></span>
+                        <span style="padding-left: 5px">Close</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

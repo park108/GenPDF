@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Code - GenPDF Administartion</title>
+    <title th:text="${title} + ' - GenPDF Administartion'"></title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -25,11 +25,11 @@
             </button>
             <a class="navbar-brand" href="/admin/">GenPDF</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/admin/">Home</a></li>
-                <li><a href="/admin/code/list/">Code</a></li>
-                <li class="active"><a href="/admin/form/list/">Form</a></li>
+                <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
             </ul>
         </div>
     </div>
@@ -39,7 +39,7 @@
 
     <!-- Title -->
     <div class="starter-template">
-        <h1>Form</h1>
+        <h1 th:text="${title}"></h1>
         <p class="lead">- <span th:text="${form.org}" /></p>
     </div>
 
@@ -57,21 +57,90 @@
         <strong th:text="${message}" />
     </div>
 
-    <form th:action="@{'/admin/form/' + ${form.org} + '/' + ${form.docType} + '/' + ${form.seq} + '/save' }" th:object="${form}" method="post">
+    <form th:action="@{'/admin/form/' + ${form.org} + '/' + ${form.docType} + '/' + ${form.seq} + '/save' }"
+          th:object="${form}"
+          enctype="multipart/form-data"
+          method="post">
 
         <!-- Table -->
         <table class="table table-striped">
             <tr>
                 <th>Document Type</th>
-                <td><input type="text" th:field="*{docType}" th:attr="readonly=*{docType}!=null?'true':'false'" /></td>
+                <td>
+                    <select type="text" th:field="*{docType}" th:attr="disabled=*{docType}!=null?'true':'false'">
+                        <option th:each="docTypeCode : ${documentTypes}"
+                                th:value="${docTypeCode.code}"
+                                th:text="${docTypeCode.codeName}" />
+                    </select>
+                </td>
             </tr>
             <tr>
-                <th>Seq</th>
-                <td><input type="text" th:field="*{seq}" readonly="readonly" /></td>
+                <th>No.</th>
+                <td><input type="number" th:field="*{seq}" readonly="readonly" /></td>
             </tr>
             <tr>
                 <th>Description</th>
-                <td><input type="text" th:field="*{description}" /></td>
+                <td><input type="text" style="width:100%" th:field="*{description}" /></td>
+            </tr>
+            <tr>
+                <th>Font Family</th>
+                <td>
+                    <select type="text" th:field="*{fontCode}" >
+                        <option th:each="fontCode : ${fonts}"
+                                th:value="${fontCode.code}"
+                                th:text="${fontCode.codeName}" />
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Font Size: Title</th>
+                <td><input type="number" step="0.1" th:field="*{fontSizeTitle}" /></td>
+            </tr>
+            <tr>
+                <th>Font Size: Body</th>
+                <td><input type="number" step="0.1" th:field="*{fontSizeBody}" /></td>
+            </tr>
+            <tr>
+                <th>Font Size: Table Header</th>
+                <td><input type="number" step="0.1" th:field="*{fontSizeTableHeader}" /></td>
+            </tr>
+            <tr>
+                <th>Font Size: Table Body</th>
+                <td><input type="number" step="0.1" th:field="*{fontSizeTableBody}" /></td>
+            </tr>
+            <tr>
+                <th>Font Size: Footer</th>
+                <td><input type="number" step="0.1" th:field="*{fontSizeFooter}" /></td>
+            </tr>
+            <tr>
+                <th>Margin: Left</th>
+                <td><input type="number" step="0.1" th:field="*{marginLeft}" /></td>
+            </tr>
+            <tr>
+                <th>Margin: Right</th>
+                <td><input type="number" step="0.1" th:field="*{marginRight}" /></td>
+            </tr>
+            <tr>
+                <th>Margin: Bottom</th>
+                <td><input type="number" step="0.1" th:field="*{marginBottom}" /></td>
+            </tr>
+            <tr>
+                <th>Margin: Top</th>
+                <td><input type="number" step="0.1" th:field="*{marginTop}" /></td>
+            </tr>
+            <tr>
+                <th>Company Logo Image</th>
+                <td>
+                    <img th:height="50px" th:attr="src=*{logoImagePath}" />
+                    <input type="file" name="logoImage" />
+                </td>
+            </tr>
+            <tr>
+                <th>Approval Signature Image</th>
+                <td>
+                    <img th:height="50px" th:attr="src=*{signImagePath}" />
+                    <input type="file" name="signImage" />
+                </td>
             </tr>
         </table>
 

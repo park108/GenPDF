@@ -25,13 +25,13 @@ public class ImageUtils {
 
 	/**
 	 * <p>
-	 * Simple reading image from file
+	 * Simple reading images from file
 	 * </p>
 	 * 
 	 * @param imageFile
-	 *            {@link File} from which image will be loaded
+	 *            {@link File} from which images will be loaded
 	 * @return {@link Image}
-	 * @throws IOException if loading image fails
+	 * @throws IOException if loading images fails
 	 */
 	public static Image readImage(File imageFile) throws IOException {
 		final BufferedImage bufferedImage = ImageIO.read(imageFile);
@@ -43,11 +43,11 @@ public class ImageUtils {
 	 * Provide an ability to scale {@link Image} on desired {@link Dimension}
 	 * </p>
 	 * 
-	 * @param imageWidth Original image width
-	 * @param imageHeight Original image height
-	 * @param boundWidth Desired image width
-	 * @param boundHeight Desired image height
-	 * @return {@code Array} with image dimension. First value is width and second is height. 
+	 * @param imageWidth Original images width
+	 * @param imageHeight Original images height
+	 * @param boundWidth Desired images width
+	 * @param boundHeight Desired images height
+	 * @return {@code Array} with images dimension. First value is width and second is height.
 	 */
 	public static float[] getScaledDimension(float imageWidth, float imageHeight, float boundWidth, float boundHeight) {
 		float newImageWidth = imageWidth;

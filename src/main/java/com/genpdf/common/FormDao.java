@@ -94,7 +94,7 @@ public class FormDao {
 
     public int setForm(Form form) {
 
-        String sql = "INSERT INTO code VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+        String sql = "INSERT INTO form VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
                 "description = ?" +
                 ", font_code = ?" +
