@@ -31,11 +31,14 @@ public class CodeDao {
 	    for(Map<String, Object> map : result) {
 
 		    code = new Code(
-	            (String) map.get("code_set")
-			    , (String) map.get("code_set_name")
-			    , ""
-			    , ""
-			    , false
+	                (String) map.get("code_set")
+			        , (String) map.get("code_set_name")
+				    , ""
+				    , ""
+				    , false
+				    , ""
+				    , ""
+				    , ""
 		    );
 
 		    codeList.add(code);
@@ -64,6 +67,9 @@ public class CodeDao {
 					, null
 					, null
 					, null
+					, ""
+					, ""
+					, ""
 			);
 		}
 
@@ -102,6 +108,9 @@ public class CodeDao {
 				", code.code" +
 				", code.code_name" +
 				", code.is_not_use" +
+				", code.attr1" +
+				", code.attr2" +
+				", code.attr3" +
 				" FROM code INNER JOIN code_set " +
 				" ON code_set.code_set = code.code_set" +
 				" WHERE code_set.code_set = ?";
@@ -119,6 +128,9 @@ public class CodeDao {
 					, (String) map.get("code")
 					, (String) map.get("code_name")
 					, (Boolean) map.get("is_not_use")
+					, (String) map.get("attr1")
+					, (String) map.get("attr2")
+					, (String) map.get("attr3")
 			);
 
 			codeList.add(code);
@@ -131,11 +143,16 @@ public class CodeDao {
 
 		Code returnCode = null;
 
+		System.out.println(codeSet + ", " + code);
+
 	    String sql = "SELECT code_set.code_set" +
 			    ", code_set.code_set_name" +
 			    ", code.code" +
 			    ", code.code_name" +
 			    ", code.is_not_use" +
+			    ", code.attr1" +
+			    ", code.attr2" +
+			    ", code.attr3" +
 			    " FROM code INNER JOIN code_set " +
 			    " ON code_set.code_set = code.code_set" +
 			    " WHERE code_set.code_set = ?" +
@@ -152,6 +169,9 @@ public class CodeDao {
 					, (String) result.get("code")
 					, (String) result.get("code_name")
 					, (Boolean) result.get("is_not_use")
+				    , (String) result.get("attr1")
+				    , (String) result.get("attr2")
+				    , (String) result.get("attr3")
 			);
 	    }
 
@@ -167,18 +187,27 @@ public class CodeDao {
 				+ ", " + code.getNotUse()
 		);
 
-	    String sql = "INSERT INTO code VALUES (?, ?, ?, ?) " +
+	    String sql = "INSERT INTO code VALUES (?, ?, ?, ?, ?, ?, ?) " +
 				    "ON DUPLICATE KEY UPDATE " +
 				    "code_name = ?" +
-				    ", is_not_use = ?";
+				    ", is_not_use = ?" +
+				    ", attr1 = ?" +
+				    ", attr2 = ?" +
+				    ", attr3 = ?";
 
 	    Object[] params = new Object[] {
 			    code.getCodeSet()
 			    , code.getCode()
 	    		, code.getCodeName()
 			    , code.getNotUse()
+			    , code.getAttr1()
+			    , code.getAttr2()
+			    , code.getAttr3()
 			    , code.getCodeName()
-			    , code.getNotUse()};
+			    , code.getNotUse()
+			    , code.getAttr1()
+			    , code.getAttr2()
+			    , code.getAttr3()};
 
 	    int result = template.update(sql, params);
 

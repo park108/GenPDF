@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 @Controller
@@ -43,7 +44,7 @@ public class AdminController {
     /******************************************************************
     /* CodeSet CRUD
      ******************************************************************/
-    @GetMapping(value = "/admin/code/list")
+    @GetMapping(value = "/admin/codes")
 	public String codeSetList(Model model) {
 
     	model.addAttribute("title", "Code");
@@ -52,7 +53,7 @@ public class AdminController {
 	    return "code_set_list";
     }
 
-    @GetMapping(value = "/admin/code/create")
+    @GetMapping(value = "/admin/codes/create")
     public String codeSetCreate(Model model) {
 
 	    model.addAttribute("title", "Code");
@@ -61,7 +62,7 @@ public class AdminController {
     	return "code_set_detail";
     }
 
-	@GetMapping(value = "/admin/code/{codeSet}/edit")
+	@GetMapping(value = "/admin/codes/{codeSet}/edit")
 	public String codeSetEdit(@PathVariable String codeSet, Model model) {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
@@ -72,7 +73,7 @@ public class AdminController {
 		return "code_set_detail";
 	}
 
-	@PostMapping(value = "/admin/code/{codeSet}/save")
+	@PostMapping(value = "/admin/codes/{codeSet}/save")
 	public String codeSetSave(@Valid Code codeSet, BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
 		if(bindingResult.hasErrors()) {
@@ -88,10 +89,10 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
-		return "redirect:/admin/code/list/";
+		return "redirect:/admin/codes/";
 	}
 
-	@PostMapping(value = "/admin/code/{codeSet}/delete")
+	@PostMapping(value = "/admin/codes/{codeSet}/delete")
 	public String codeSetDelete(@PathVariable String codeSet, final RedirectAttributes redirectAttributes) {
 
 		int result = codeDao.delCodeSet(codeSet);
@@ -99,13 +100,13 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Delete Successfully!");
 
-		return "redirect:/admin/code/list/";
+		return "redirect:/admin/codes/";
 	}
 
 	/******************************************************************
 	 /* Code CRUD
 	 ******************************************************************/
-	@GetMapping(value = "/admin/code/{codeSet}/list")
+	@GetMapping(value = "/admin/codes/{codeSet}")
 	public String codeList(@PathVariable String codeSet, Model model) {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
@@ -117,7 +118,7 @@ public class AdminController {
 		return "code_list";
 	}
 
-	@GetMapping(value = "/admin/code/{codeSet}/create")
+	@GetMapping(value = "/admin/codes/{codeSet}/create")
 	public String codeCreate(@PathVariable String codeSet, Model model) {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
@@ -129,7 +130,7 @@ public class AdminController {
 		return "code_detail";
 	}
 
-	@GetMapping(value = "/admin/code/{codeSet}/{code}/edit")
+	@GetMapping(value = "/admin/codes/{codeSet}/{code}/edit")
 	public String codeEdit(@PathVariable String codeSet, @PathVariable String code, Model model) {
 
 		Code selectedCodeSet = codeDao.getCodeSet(codeSet);
@@ -142,7 +143,7 @@ public class AdminController {
 		return "code_detail";
 	}
 
-	@PostMapping(value = "/admin/code/{codeSet}/{code}/save")
+	@PostMapping(value = "/admin/codes/{codeSet}/{code}/save")
 	public String codeSave(@Valid Code code, BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
 		if(bindingResult.hasErrors()) {
@@ -158,10 +159,10 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
-		return "redirect:/admin/code/" + code.getCodeSet() + "/list/";
+		return "redirect:/admin/codes/" + code.getCodeSet();
 	}
 
-	@PostMapping(value = "/admin/code/{codeSet}/{code}/delete")
+	@PostMapping(value = "/admin/codes/{codeSet}/{code}/delete")
 	public String codeDelete(@PathVariable String codeSet, @PathVariable String code, final RedirectAttributes redirectAttributes) {
 
 		int result = codeDao.delCode(codeSet, code);
@@ -169,13 +170,13 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Delete Successfully!");
 
-		return "redirect:/admin/code/" + codeSet + "/list/";
+		return "redirect:/admin/codes/" + codeSet;
 	}
 
 	/******************************************************************
 	 /* Form CRUD
 	 ******************************************************************/
-	@GetMapping(value = "/admin/form/list")
+	@GetMapping(value = "/admin/forms")
 	public String formMain(Model model) {
 
 		// TODO: org 값을 사용자 정보(Session)에서 가져와야 함
@@ -188,7 +189,7 @@ public class AdminController {
     	return "form_list";
 	}
 
-	@GetMapping(value = "/admin/form/{org}/create")
+	@GetMapping(value = "/admin/forms/{org}/create")
 	public String formCreate(@PathVariable String org, Model model) {
 
 		Form newForm = new Form();
@@ -202,7 +203,7 @@ public class AdminController {
 		return "form_detail";
 	}
 
-	@GetMapping(value = "/admin/form/{org}/{docType}/{seq}/edit")
+	@GetMapping(value = "/admin/forms/{org}/{docType}/{seq}/edit")
 	public String formEdit(@PathVariable String org, @PathVariable String docType, @PathVariable int seq, Model model) {
 
 		Form selectedForm = formDao.getForm(org, docType, seq);
@@ -215,7 +216,7 @@ public class AdminController {
 		return "form_detail";
 	}
 
-	@PostMapping(value = "/admin/form/{org}/{docType}/{seq}/save")
+	@PostMapping(value = "/admin/forms/{org}/{docType}/{seq}/save")
 	public String formSave(@Valid Form form, BindingResult bindingResult
 			, @RequestParam("logoImage") MultipartFile logoImage
 			, @RequestParam("signImage") MultipartFile signImage
@@ -229,33 +230,38 @@ public class AdminController {
 			return "form_detail";
 		}
 
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
 		try {
 			String realPath = getClass().getResource(FILE_DIR).getPath();
 			String staticPath = getClass().getResource(STATIC_DIR).getPath();
 
-			String logoImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_logo.image";
-			String signImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_sign.image";
-
-			form.setLogoImagePath(FILE_DIR + logoImageName);
-			form.setSignImagePath(FILE_DIR + signImageName);
-
 			byte[] bytes;
-			Path path;
+			Path filePath;
+			Path webPath;
 
 			if(!logoImage.isEmpty()) {
+
+				String logoImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_" + timestamp.getTime() + "_logo.image";
+				form.setLogoImagePath(FILE_DIR + logoImageName);
+
 				bytes = logoImage.getBytes();
-				path = Paths.get(realPath + logoImageName);
-				Files.write(path, bytes);
-				path = Paths.get(staticPath + logoImageName);
-				Files.write(path, bytes);
+				filePath = Paths.get(realPath + logoImageName);
+				Files.write(filePath, bytes);
+				webPath = Paths.get(staticPath + logoImageName);
+				Files.write(webPath, bytes);
 			}
 
 			if(!signImage.isEmpty()) {
+
+				String signImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_" + timestamp.getTime() + "_sign.image";
+				form.setSignImagePath(FILE_DIR + signImageName);
+
 				bytes = signImage.getBytes();
-				path = Paths.get(realPath + signImageName);
-				Files.write(path, bytes);
-				path = Paths.get(staticPath + signImageName);
-				Files.write(path, bytes);
+				filePath = Paths.get(realPath + signImageName);
+				Files.write(filePath, bytes);
+				webPath = Paths.get(staticPath + signImageName);
+				Files.write(webPath, bytes);
 			}
 		}
 		catch(IOException e) {
@@ -264,7 +270,7 @@ public class AdminController {
 			redirectAttributes.addFlashAttribute("result", "E");
 			redirectAttributes.addFlashAttribute("message", "File upload error!");
 
-			return "redirect:/admin/form/list/";
+			return "redirect:/admin/forms/";
 		}
 
 		int result = formDao.setForm(form);
@@ -272,6 +278,6 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
-		return "redirect:/admin/form/list/";
+		return "redirect:/admin/forms/";
 	}
 }

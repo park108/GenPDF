@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>GenPDF Administartion</title>
+    <title>GenPDF Administration</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -28,8 +28,8 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
-                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
-                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/codes/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/forms/">Form</a></li>
             </ul>
         </div>
     </div>
@@ -40,19 +40,37 @@
 
     <div class="starter-template">
         <h1>GenPDF Administration</h1>
-        <p class="lead">Hi~<br />GenPDF 관리자 화면입니다</p>
     </div>
 
-    <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/code/list/'">
-        <span class="glyphicon glyphicon-menu-right pull-left"></span>
-        <span style="padding-left: 5px">Code</span>
-    </button>
-    <br />
-    <br />
-    <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/form/list/'">
-        <span class="glyphicon glyphicon-menu-right pull-left"></span>
-        <span style="padding-left: 5px">Form</span>
-    </button>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Code management</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Manage common codes.
+            </p>
+            <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/codes/'">
+                <span class="glyphicon glyphicon-menu-right pull-left"></span>
+                <span style="padding-left: 5px">Go</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Form management</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Manage document forms.
+            </p>
+            <button type="button" class="btn btn-sm btn-default" onclick="window.location.href='/admin/forms/'">
+                <span class="glyphicon glyphicon-menu-right pull-left"></span>
+                <span style="padding-left: 5px">Go</span>
+            </button>
+        </div>
+    </div>
 
 </div>
 

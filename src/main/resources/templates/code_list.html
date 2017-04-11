@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${title} + ' - GenPDF Administartion'"></title>
+    <title th:text="${title} + ' - GenPDF Administration'"></title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -29,8 +29,8 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
-                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
-                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/codes/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/forms/">Form</a></li>
             </ul>
         </div>
     </div>
@@ -60,7 +60,7 @@
 
     <!-- Button Bar(Top) -->
     <div class="button-bar">
-        <button class="btn btn-sm btn-primary" th:attr="onclick='window.location.href=\'/admin/code/' + ${codeSet.codeSet} + '/create/\''">
+        <button class="btn btn-sm btn-primary" th:attr="onclick='window.location.href=\'/admin/codes/' + ${codeSet.codeSet} + '/create/\''">
             <span class="glyphicon glyphicon-plus pull-left"></span>
             <span style="padding-left: 5px">Add code</span>
         </button>
@@ -73,6 +73,9 @@
             <th>Code</th>
             <th>Code Name</th>
             <th>Not Use</th>
+            <th>Attr1</th>
+            <th>Attr2</th>
+            <th>Attr3</th>
         </tr>
         <tr th:each="codeList : ${codeList}">
             <td>
@@ -81,16 +84,19 @@
                 </a>
             </td>
             <td>
-                <a th:href="@{'/admin/code/' + ${codeList.codeSet} + '/' + ${codeList.code} + '/edit/' }" th:text="${codeList.code}" />
+                <a th:href="@{'/admin/codes/' + ${codeList.codeSet} + '/' + ${codeList.code} + '/edit/' }" th:text="${codeList.code}" />
             </td>
             <td th:text="${codeList.codeName}"></td>
             <td><input type="checkbox" th:checked="${codeList.notUse}" th:disabled="true" /></td>
+            <td th:text="${codeList.attr1}"></td>
+            <td th:text="${codeList.attr2}"></td>
+            <td th:text="${codeList.attr3}"></td>
         </tr>
     </table>
 
     <!-- Button Bar(Bottom) -->
     <div class="button-bar">
-        <button type="button" class="btn btn-sm btn-warning" onclick="window.location.href='/admin/code/list/'">
+        <button type="button" class="btn btn-sm btn-warning" onclick="window.location.href='/admin/codes/'">
             <span class="glyphicon glyphicon-menu-left pull-left"></span>
             <span style="padding-left: 5px">Back</span>
         </button>

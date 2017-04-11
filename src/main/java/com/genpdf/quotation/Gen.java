@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
+import com.genpdf.common.Code;
 import com.genpdf.common.FormDao;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -28,7 +29,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class Gen {
 
-	public QuotationResponse generate(Form form, Quotation quotation) throws IOException {
+	public QuotationResponse generate(Form form, Code font, Quotation quotation) throws IOException {
 		
 		// Document 생성
 		PDDocument document = new PDDocument();
@@ -43,7 +44,7 @@ public class Gen {
 		// Document 컨텐츠 추가
 		PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-		form.initialize(document, page);
+		form.initialize(document, page, font);
 	    
 	    float y = 0;
 	    float textWidth = 0;
@@ -67,9 +68,17 @@ public class Gen {
 		Image imageLogo = new Image(ImageIO.read(new File(logoImageUrl.getPath())));
 
 		float logoHeight = 50;
-		imageLogo = imageLogo.scaleByHeight(logoHeight);
+		float logoWidth = 100;
+
+		if(imageLogo.getHeight() > logoHeight) {
+			imageLogo = imageLogo.scaleByHeight(logoHeight);
+		}
+		if(imageLogo.getWidth() > logoWidth) {
+			imageLogo = imageLogo.scaleByWidth(logoWidth);
+		}
+
 		imageLogo.draw(document, contentStream, form.getMarginLeft(), y);
-		
+
 		// 타이틀 출력
 	    float titleHeight = form.getPageHeight() - form.getMarginTop() - (logoHeight - (form.getFontSizeTitle() / 2));
 		contentStream.beginText();
@@ -81,7 +90,7 @@ public class Gen {
 		contentStream.endText();
 		
 		// 견적 번호 출력
-	    y = y - logoHeight - 10;
+	    y = y - logoHeight - 15;
 	    		
 		contentStream.beginText();
 		contentStream.setFont(form.getFont(), form.getFontSizeBody());
@@ -283,7 +292,14 @@ public class Gen {
 		Image imageSign = new Image(ImageIO.read(new File(signImageUrl.getPath())));
 
 		float signHeight = 80;
-		imageSign = imageSign.scaleByHeight(signHeight);
+		float signWidth = 120;
+		if(imageSign.getHeight() > signHeight) {
+			imageSign = imageSign.scaleByHeight(signHeight);
+		}
+		if(imageSign.getWidth() > signWidth) {
+			imageSign = imageSign.scaleByWidth(signWidth);
+		}
+
 		y = 150 + (imageSign.getHeight() / 2);
 		imageSign.draw(document, contentStream, form.getPageWidth() - imageSign.getWidth() - form.getMarginRight(), y);
 	    

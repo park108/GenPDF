@@ -3,12 +3,14 @@ package com.genpdf.common;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import jdk.nashorn.internal.objects.annotations.Property;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 public class Form{
@@ -43,6 +45,9 @@ public class Form{
 
 	private String filePath;
 
+	@Autowired
+	private CodeDao codeDao;
+
 	public Form() {
 		super();
 	}
@@ -69,10 +74,10 @@ public class Form{
 		this.signImagePath = signImagePath;
 	}
 
-	public void initialize(PDDocument document, PDPage page) {
+	public void initialize(PDDocument document, PDPage page, Code font) {
 
-		String fontPath = getFontPath(false);
-		String fontPathBold = getFontPath(true);
+		String fontPath = "/fonts/" + font.getAttr1();
+		String fontPathBold = font.getAttr2().length() > 0 ? "/fonts/" + font.getAttr2() : "/fonts/" + font.getAttr1();
 
 		URL fontUrl = getClass().getResource(fontPath);
 		URL fontBoldUrl = getClass().getResource(fontPathBold);
@@ -228,39 +233,6 @@ public class Form{
 
 	public void setSignImagePath(String signImagePath) {
 		this.signImagePath = signImagePath;
-	}
-
-	private String getFontPath(Boolean isBold) {
-		
-		final String fontDir = "/fonts/";
-		String selectedFont = getFontCode();
-		
-		String fontFileName = "";
-		
-		if("1".equals(selectedFont)) {
-			if(!isBold) {
-				fontFileName = "NanumGothic.ttf";
-			}
-			else {
-				fontFileName = "NanumGothicBold.ttf";
-			}
-		}
-		else if("2".equals(selectedFont)) {
-			if(!isBold) {
-				fontFileName = "NanumMyeongjo.ttf";
-			}
-			else {
-				fontFileName = "NanumMyeongjoBold.ttf";
-			}
-		}
-		else if("3".equals(selectedFont)) {
-			fontFileName = "NanumBrush.ttf";
-		}
-		else if("4".equals(selectedFont)) {
-			fontFileName = "NanumPen.ttf";
-		}
-		
-		return fontDir + fontFileName;
 	}
 
 	public String getOrg() {

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${title} + ' - GenPDF Administartion'"></title>
+    <title th:text="${title} + ' - GenPDF Administration'"></title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/starter-template.css" />
     <script src="/js/jquery-3.2.0.min.js" />
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="/js/form.js" />
 </head>
 <body>
 
@@ -28,8 +29,8 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li th:class="${title}=='Home'?'active':''"><a href="/admin/">Home</a></li>
-                <li th:class="${title}=='Code'?'active':''"><a href="/admin/code/list/">Code</a></li>
-                <li th:class="${title}=='Form'?'active':''"><a href="/admin/form/list/">Form</a></li>
+                <li th:class="${title}=='Code'?'active':''"><a href="/admin/codes/">Code</a></li>
+                <li th:class="${title}=='Form'?'active':''"><a href="/admin/forms/">Form</a></li>
             </ul>
         </div>
     </div>
@@ -57,7 +58,7 @@
         <strong th:text="${message}" />
     </div>
 
-    <form th:action="@{'/admin/form/' + ${form.org} + '/' + ${form.docType} + '/' + ${form.seq} + '/save' }"
+    <form th:action="@{'/admin/forms/' + ${form.org} + '/' + ${form.docType} + '/' + ${form.seq} + '/save' }"
           th:object="${form}"
           enctype="multipart/form-data"
           method="post">
@@ -132,21 +133,23 @@
                 <th>Company Logo Image</th>
                 <td>
                     <img th:height="50px" th:attr="src=*{logoImagePath}" />
-                    <input type="file" name="logoImage" />
+                    <input type="hidden" th:field="*{logoImagePath}" />
+                    <input type="file" accept="image/*" name="logoImage" />
                 </td>
             </tr>
             <tr>
                 <th>Approval Signature Image</th>
                 <td>
                     <img th:height="50px" th:attr="src=*{signImagePath}" />
-                    <input type="file" name="signImage" />
+                    <input type="hidden" th:field="*{signImagePath}" />
+                    <input type="file" accept="image/*" name="signImage" />
                 </td>
             </tr>
         </table>
 
         <!-- Button Bar(Bottom) -->
         <div class="button-bar">
-            <button type="button" class="btn btn-sm btn-warning" onclick="window.location.href='/admin/form/list/'">
+            <button type="button" class="btn btn-sm btn-warning" onclick="window.location.href='/admin/forms/'">
                 <span class="glyphicon glyphicon-menu-left pull-left"></span>
                 <span style="padding-left: 5px">Back</span>
             </button>
