@@ -58,26 +58,26 @@
         <strong th:text="${message}" />
     </div>
 
-    <form th:action="@{'/admin/forms/' + ${form.org} + '/' + ${form.docType} + '/' + ${form.seq} + '/save' }"
+    <form th:attr="action=${form.id > 0 ? '/admin/forms/' + form.id + '/edit' : '/admin/forms/create'}"
           th:object="${form}"
           enctype="multipart/form-data"
           method="post">
 
         <!-- Table -->
         <table class="table table-striped">
+            <tr th:if="*{id} > 0">
+                <th>No.</th>
+                <td><input type="text" th:field="*{id}" readonly="readonly" /></td>
+            </tr>
             <tr>
                 <th>Document Type</th>
                 <td>
-                    <select type="text" th:field="*{docType}" th:attr="disabled=*{docType}!=null?'true':'false'">
+                    <select type="text" th:field="*{docType}">
                         <option th:each="docTypeCode : ${documentTypes}"
                                 th:value="${docTypeCode.code}"
                                 th:text="${docTypeCode.codeName}" />
                     </select>
                 </td>
-            </tr>
-            <tr>
-                <th>No.</th>
-                <td><input type="number" th:field="*{seq}" readonly="readonly" /></td>
             </tr>
             <tr>
                 <th>Description</th>

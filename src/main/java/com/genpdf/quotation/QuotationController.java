@@ -45,13 +45,13 @@ public class QuotationController {
         
     	System.out.println("Creating Quotation: "+ quotation.getHeader().getSubject() + ", " + quotation.getHeader().getQuotationNumber());
 
-    	Form form = formDao.getForm(request.getOrg(), request.getDocType(), request.getSeq());
+    	Form form = formDao.getForm(request.getId());
     	Code font = codeDao.getCode("F002", form.getFontCode());
 
 	    QuotationResponse response;
 
 	    if(null == form) {
-		    response = new QuotationResponse("", "E", "등록되지 않은 Form 입니다: seq = " + request.getSeq());
+		    response = new QuotationResponse("", "E", "등록되지 않은 Form 입니다: seq = " + request.getId());
 	    }
 	    else {
 		    response = new Gen().generate(form, font, quotation);

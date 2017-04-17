@@ -60,7 +60,7 @@
 
     <!-- Button Bar(Top) -->
     <div class="button-bar">
-        <button class="btn btn-sm btn-primary" th:attr="onclick='window.location.href=\'/admin/forms/' + ${org} + '/create/\''">
+        <button class="btn btn-sm btn-primary" onclick="window.location.href='/admin/forms/create/'">
             <span class="glyphicon glyphicon-plus pull-left"></span>
             <span style="padding-left: 5px">Add form</span>
         </button>
@@ -70,16 +70,17 @@
     <table class="table table-striped">
         <tr>
             <th></th>
-            <th>Type</th>
             <th>No.</th>
+            <th>Type</th>
             <th>Description</th>
         </tr>
         <tr th:each="formList : ${formList}">
             <td>
-                <a href="#" class="open-modal" data-toggle="modal" data-target="#modalDelete" th:attr="data-id=${formList.docType} + ', ' + ${formList.seq}" >
+                <a href="#" class="open-modal" data-toggle="modal" data-target="#modalDelete" th:attr="data-id=${formList.id}" >
                     <span class="glyphicon glyphicon-trash"></span>
                 </a>
             </td>
+            <td th:text="${formList.id}"></td>
             <td>
                 <select type="text" disabled="disabled">
                     <option th:each="docTypeCode : ${documentTypes}"
@@ -89,9 +90,8 @@
                     />
                 </select>
             </td>
-            <td th:text="${formList.seq}"></td>
             <td>
-                <a th:href="@{'/admin/forms/' + ${formList.org} + '/' + ${formList.docType} + '/' + ${formList.seq} + '/edit/' }">
+                <a th:href="@{'/admin/forms/' + ${formList.id} + '/edit/' }">
                     <span th:text="${formList.description}" />
                 </a>
             </td>

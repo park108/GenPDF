@@ -2,41 +2,21 @@ package com.genpdf.common;
 
 public abstract class GenRequest {
 
-	private String org;
-	private String docType;
-	private int seq;
+	private long id;
 
 	public GenRequest() {
 		super();
 	}
 
-	public GenRequest(String org, String docType, int seq) {
-		this.org = org;
-		this.docType = docType;
-		this.seq = seq;
+	public GenRequest(long id) {
+		this.id = id;
 	}
 
-	public String getOrg() {
-		return org;
+	public long getId() {
+		return id;
 	}
 
-	public void setOrg(String org) {
-		this.org = org;
-	}
-
-	public String getDocType() {
-		return docType;
-	}
-
-	public void setDocType(String docType) {
-		this.docType = docType;
-	}
-
-	public int getSeq() {
-		return seq;
-	}
-
-	public void setSeq(int seq) {
-		this.seq = seq;
+	public void setId(long id) {
+		this.id = id;
 	}
 }

@@ -15,9 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class Form{
 
+	private long id;
+
 	private String org;
 	private String docType;
-	private int seq;
 
 	private String description;
 
@@ -45,20 +46,17 @@ public class Form{
 
 	private String filePath;
 
-	@Autowired
-	private CodeDao codeDao;
-
 	public Form() {
 		super();
 	}
 
-	public Form(String org, String docType, int seq, String description, String fontCode, float fontSizeTitle, float fontSizeBody, float fontSizeTableHeader, float fontSizeTableBody, float fontSizeFooter, float marginLeft, float marginRight, float marginBottom, float marginTop, String logoImagePath, String signImagePath) {
+	public Form(long id, String org, String docType, String description, String fontCode, float fontSizeTitle, float fontSizeBody, float fontSizeTableHeader, float fontSizeTableBody, float fontSizeFooter, float marginLeft, float marginRight, float marginBottom, float marginTop, String logoImagePath, String signImagePath) {
 
 		super();
 
+		this.id = id;
 		this.org = org;
 		this.docType = docType;
-		this.seq = seq;
 		this.description = description;
 		this.fontCode = fontCode;
 		this.fontSizeTitle = fontSizeTitle;
@@ -82,21 +80,26 @@ public class Form{
 		URL fontUrl = getClass().getResource(fontPath);
 		URL fontBoldUrl = getClass().getResource(fontPathBold);
 
-		System.out.println("Font(general) path = " + fontUrl.getPath());
-		System.out.println("Font(bold) path = " + fontBoldUrl.getPath());
-
 		File fontFile = new File(fontUrl.getPath());
 		File fontFileBold = new File(fontBoldUrl.getPath());
 
-	    try {
+		try {
 			setFont(PDType0Font.load(document, fontFile));
-		    setFontBold(PDType0Font.load(document, fontFileBold));
+			setFontBold(PDType0Font.load(document, fontFileBold));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		setPageWidth(page.getMediaBox().getWidth());
 		setPageHeight(page.getMediaBox().getHeight());
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getFontCode() {
@@ -249,14 +252,6 @@ public class Form{
 
 	public void setDocType(String docType) {
 		this.docType = docType;
-	}
-
-	public int getSeq() {
-		return seq;
-	}
-
-	public void setSeq(int seq) {
-		this.seq = seq;
 	}
 
 	public String getDescription() {

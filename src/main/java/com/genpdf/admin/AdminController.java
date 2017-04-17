@@ -189,11 +189,12 @@ public class AdminController {
     	return "form_list";
 	}
 
-	@GetMapping(value = "/admin/forms/{org}/create")
-	public String formCreate(@PathVariable String org, Model model) {
+	@GetMapping(value = "/admin/forms/create")
+	public String formCreate(Model model) {
 
 		Form newForm = new Form();
-		newForm.setOrg(org);
+		// TODO: org 값을 사용자 정보(Session)에서 가져와야 함
+		newForm.setOrg("SKCC");
 
 		model.addAttribute("title", "Form");
 		model.addAttribute("form", newForm);
@@ -203,24 +204,14 @@ public class AdminController {
 		return "form_detail";
 	}
 
-	@GetMapping(value = "/admin/forms/{org}/{docType}/{seq}/edit")
-	public String formEdit(@PathVariable String org, @PathVariable String docType, @PathVariable int seq, Model model) {
-
-		Form selectedForm = formDao.getForm(org, docType, seq);
-
-		model.addAttribute("title", "Form");
-		model.addAttribute("form", selectedForm);
-		model.addAttribute("documentTypes", codeDao.getCodeList("F001"));
-		model.addAttribute("fonts", codeDao.getCodeList("F002"));
-
-		return "form_detail";
-	}
-
-	@PostMapping(value = "/admin/forms/{org}/{docType}/{seq}/save")
-	public String formSave(@Valid Form form, BindingResult bindingResult
+	@PostMapping(value = "/admin/forms/create")
+	public String formCreate(@Valid Form form, BindingResult bindingResult
 			, @RequestParam("logoImage") MultipartFile logoImage
 			, @RequestParam("signImage") MultipartFile signImage
 			, final RedirectAttributes redirectAttributes) {
+
+		// TODO: org 값을 사용자 정보(Session)에서 가져와야 함
+		form.setOrg("SKCC");
 
 		if(bindingResult.hasErrors()) {
 
@@ -230,39 +221,12 @@ public class AdminController {
 			return "form_detail";
 		}
 
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		long id = formDao.insertForm(form);
+		form.setId(id);
 
 		try {
-			String realPath = getClass().getResource(FILE_DIR).getPath();
-			String staticPath = getClass().getResource(STATIC_DIR).getPath();
-
-			byte[] bytes;
-			Path filePath;
-			Path webPath;
-
-			if(!logoImage.isEmpty()) {
-
-				String logoImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_" + timestamp.getTime() + "_logo.image";
-				form.setLogoImagePath(FILE_DIR + logoImageName);
-
-				bytes = logoImage.getBytes();
-				filePath = Paths.get(realPath + logoImageName);
-				Files.write(filePath, bytes);
-				webPath = Paths.get(staticPath + logoImageName);
-				Files.write(webPath, bytes);
-			}
-
-			if(!signImage.isEmpty()) {
-
-				String signImageName = form.getOrg() + "_" + form.getDocType() + "_" + form.getSeq() + "_" + timestamp.getTime() + "_sign.image";
-				form.setSignImagePath(FILE_DIR + signImageName);
-
-				bytes = signImage.getBytes();
-				filePath = Paths.get(realPath + signImageName);
-				Files.write(filePath, bytes);
-				webPath = Paths.get(staticPath + signImageName);
-				Files.write(webPath, bytes);
-			}
+			form.setLogoImagePath(uploadFile(id, "logo", logoImage));
+			form.setSignImagePath(uploadFile(id, "sign", signImage));
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -273,7 +237,83 @@ public class AdminController {
 			return "redirect:/admin/forms/";
 		}
 
-		int result = formDao.setForm(form);
+		formDao.updateForm(form);
+
+		redirectAttributes.addFlashAttribute("result", "S");
+		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
+
+		return "redirect:/admin/forms/";
+	}
+
+	private String uploadFile(long id, String type, MultipartFile file) throws IOException {
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+		String fileName = id + "_" + timestamp.getTime() + "_" + type + ".image";
+
+		String realPath = getClass().getResource(FILE_DIR).getPath();
+		String staticPath = getClass().getResource(STATIC_DIR).getPath();
+
+		byte[] bytes;
+		Path filePath;
+		Path webPath;
+
+		if(!file.isEmpty()) {
+
+			bytes = file.getBytes();
+			filePath = Paths.get(realPath + file);
+			Files.write(filePath, bytes);
+			webPath = Paths.get(staticPath + file);
+			Files.write(webPath, bytes);
+		}
+
+		return FILE_DIR + fileName;
+	}
+
+	@GetMapping(value = "/admin/forms/{id}/edit")
+	public String formEdit(@PathVariable long id, Model model) {
+
+		Form selectedForm = formDao.getForm(id);
+
+		model.addAttribute("title", "Form");
+		model.addAttribute("form", selectedForm);
+		model.addAttribute("documentTypes", codeDao.getCodeList("F001"));
+		model.addAttribute("fonts", codeDao.getCodeList("F002"));
+
+		return "form_detail";
+	}
+
+	@PostMapping(value = "/admin/forms/{id}/edit")
+	public String formEdit(@Valid Form form, BindingResult bindingResult
+			, @RequestParam("logoImage") MultipartFile logoImage
+			, @RequestParam("signImage") MultipartFile signImage
+			, final RedirectAttributes redirectAttributes) {
+
+		// TODO: org 값을 사용자 정보(Session)에서 가져와야 함
+		form.setOrg("SKCC");
+
+		if(bindingResult.hasErrors()) {
+
+			redirectAttributes.addFlashAttribute("result", "E");
+			redirectAttributes.addFlashAttribute("message", "Input correctly!");
+
+			return "form_detail";
+		}
+
+		try {
+			form.setLogoImagePath(uploadFile(form.getId(), "logo", logoImage));
+			form.setSignImagePath(uploadFile(form.getId(), "sign", signImage));
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+
+			redirectAttributes.addFlashAttribute("result", "E");
+			redirectAttributes.addFlashAttribute("message", "File upload error!");
+
+			return "redirect:/admin/forms/";
+		}
+
+		formDao.updateForm(form);
 
 		redirectAttributes.addFlashAttribute("result", "S");
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");

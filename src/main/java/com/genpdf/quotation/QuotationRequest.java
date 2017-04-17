@@ -10,8 +10,8 @@ public class QuotationRequest extends GenRequest {
 		super();
 	}
 
-	public QuotationRequest(String org, String docType, int seq, Quotation quotation) {
-		super(org, docType, seq);
+	public QuotationRequest(long id) {
+		super(id);
 		this.quotation = quotation;
 	}
 
