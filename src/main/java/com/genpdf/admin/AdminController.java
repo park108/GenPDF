@@ -13,13 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 @Controller
 public class AdminController {
@@ -225,8 +223,8 @@ public class AdminController {
 		form.setId(id);
 
 		try {
-			form.setLogoImagePath(uploadFile(id, "logo", logoImage));
-			form.setSignImagePath(uploadFile(id, "sign", signImage));
+			form.setLogoImagePath(uploadImageFile(id, "logo", logoImage));
+			form.setSignImagePath(uploadImageFile(id, "sign", signImage));
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -243,31 +241,6 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
 		return "redirect:/admin/forms/";
-	}
-
-	private String uploadFile(long id, String type, MultipartFile file) throws IOException {
-
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-		String fileName = id + "_" + timestamp.getTime() + "_" + type + ".image";
-
-		String realPath = getClass().getResource(FILE_DIR).getPath();
-		String staticPath = getClass().getResource(STATIC_DIR).getPath();
-
-		byte[] bytes;
-		Path filePath;
-		Path webPath;
-
-		if(!file.isEmpty()) {
-
-			bytes = file.getBytes();
-			filePath = Paths.get(realPath + file);
-			Files.write(filePath, bytes);
-			webPath = Paths.get(staticPath + file);
-			Files.write(webPath, bytes);
-		}
-
-		return FILE_DIR + fileName;
 	}
 
 	@GetMapping(value = "/admin/forms/{id}/edit")
@@ -301,8 +274,8 @@ public class AdminController {
 		}
 
 		try {
-			form.setLogoImagePath(uploadFile(form.getId(), "logo", logoImage));
-			form.setSignImagePath(uploadFile(form.getId(), "sign", signImage));
+			form.setLogoImagePath(uploadImageFile(form.getId(), "logo", logoImage));
+			form.setSignImagePath(uploadImageFile(form.getId(), "sign", signImage));
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -319,5 +292,44 @@ public class AdminController {
 		redirectAttributes.addFlashAttribute("message", "Save Successfully!");
 
 		return "redirect:/admin/forms/";
+	}
+
+	@PostMapping(value = "/admin/forms/{id}/delete")
+	public String formDelete(@PathVariable long id, final RedirectAttributes redirectAttributes) {
+
+		int result = formDao.delForm(id);
+
+		redirectAttributes.addFlashAttribute("result", "S");
+		redirectAttributes.addFlashAttribute("message", "Delete Successfully!");
+
+		return "redirect:/admin/forms/";
+	}
+
+	/******************************************************************
+	 /* Functions
+	 ******************************************************************/
+	private String uploadImageFile(long id, String type, MultipartFile file) throws IOException {
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+		String fileName = id + "_" + timestamp.getTime() + "_" + type + ".image";
+
+		String realPath = getClass().getResource(FILE_DIR).getPath();
+		String staticPath = getClass().getResource(STATIC_DIR).getPath();
+
+		byte[] bytes;
+		Path filePath;
+		Path webPath;
+
+		if(!file.isEmpty()) {
+
+			bytes = file.getBytes();
+			filePath = Paths.get(realPath + file);
+			Files.write(filePath, bytes);
+			webPath = Paths.get(staticPath + file);
+			Files.write(webPath, bytes);
+		}
+
+		return FILE_DIR + fileName;
 	}
 }

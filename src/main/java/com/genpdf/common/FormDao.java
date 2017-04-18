@@ -168,4 +168,15 @@ public class FormDao {
 
         return result;
     }
+
+    public int delForm(long id) {
+
+        String sql = "DELETE FROM form WHERE id = ?";
+
+        Object[] params = new Object[] {id};
+
+        int result = template.update(sql, params);
+
+        return result;
+    }
 }

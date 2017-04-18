@@ -157,10 +157,41 @@
                 <span class="glyphicon glyphicon-save pull-left"></span>
                 <span style="padding-left: 5px">Save</span>
             </button>
+            <button th:if="*{id}!=null" type="button" class="btn btn-sm btn-danger open-modal" data-toggle="modal" data-target="#modalDelete" th:attr="data-id=*{id}" >
+                <span class="glyphicon glyphicon-trash pull-left"></span>
+                <span style="padding-left: 5px">Delete</span>
+            </button>
         </div>
 
     </form>
 
+</div>
+
+<!-- Delete Modal -->
+<div id="modalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p>Delete <span id="code"></span>. Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" action="" method="post">
+                    <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-trash pull-left"></span>
+                        <span style="padding-left: 5px">Delete</span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove pull-left"></span>
+                        <span style="padding-left: 5px">Close</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
