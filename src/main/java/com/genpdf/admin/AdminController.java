@@ -223,8 +223,12 @@ public class AdminController {
 		form.setId(id);
 
 		try {
-			form.setLogoImagePath(uploadImageFile(id, "logo", logoImage));
-			form.setSignImagePath(uploadImageFile(id, "sign", signImage));
+			if(!logoImage.isEmpty()) {
+				form.setLogoImagePath(uploadImageFile(form.getId(), "logo", logoImage));
+			}
+			if(!signImage.isEmpty()) {
+				form.setSignImagePath(uploadImageFile(form.getId(), "sign", signImage));
+			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -274,8 +278,12 @@ public class AdminController {
 		}
 
 		try {
-			form.setLogoImagePath(uploadImageFile(form.getId(), "logo", logoImage));
-			form.setSignImagePath(uploadImageFile(form.getId(), "sign", signImage));
+			if(!logoImage.isEmpty()) {
+				form.setLogoImagePath(uploadImageFile(form.getId(), "logo", logoImage));
+			}
+			if(!signImage.isEmpty()) {
+				form.setSignImagePath(uploadImageFile(form.getId(), "sign", signImage));
+			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -324,9 +332,9 @@ public class AdminController {
 		if(!file.isEmpty()) {
 
 			bytes = file.getBytes();
-			filePath = Paths.get(realPath + file);
+			filePath = Paths.get(realPath + fileName);
 			Files.write(filePath, bytes);
-			webPath = Paths.get(staticPath + file);
+			webPath = Paths.get(staticPath + fileName);
 			Files.write(webPath, bytes);
 		}
 

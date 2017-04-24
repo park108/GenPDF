@@ -1,11 +1,10 @@
 package com.genpdf.quotation;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
-import com.genpdf.common.Code;
-import com.genpdf.common.CodeDao;
-import com.genpdf.common.Form;
-import com.genpdf.common.FormDao;
+import com.genpdf.common.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,9 @@ public class QuotationController {
 
 	@Autowired
 	private FormDao formDao;
+
+	@Autowired
+	private FormComponentDao formComponentDao;
 
 	private Quotation quotation;
 
@@ -46,6 +48,7 @@ public class QuotationController {
     	System.out.println("Creating Quotation: "+ quotation.getHeader().getSubject() + ", " + quotation.getHeader().getQuotationNumber());
 
     	Form form = formDao.getForm(request.getId());
+    	Map<String, FormComponent> componentMap = formComponentDao.getFormComponentMap(request.getId());
     	Code font = codeDao.getCode("F002", form.getFontCode());
 
 	    QuotationResponse response;
@@ -54,7 +57,7 @@ public class QuotationController {
 		    response = new QuotationResponse("", "E", "등록되지 않은 Form 입니다: seq = " + request.getId());
 	    }
 	    else {
-		    response = new Gen().generate(form, font, quotation);
+		    response = new Gen().generate(form, componentMap, font, quotation);
 	    }
 
 	    return new ResponseEntity<QuotationResponse>(response, HttpStatus.CREATED);

@@ -78,13 +78,13 @@
                 <span class="glyphicon glyphicon-menu-left pull-left"></span>
                 <span style="padding-left: 5px">Back</span>
             </button>
-            <button type="submit" class="btn btn-sm btn-success">
-                <span class="glyphicon glyphicon-save pull-left"></span>
-                <span style="padding-left: 5px">Save</span>
-            </button>
             <button th:if="*{codeSet}!=null" type="button" class="btn btn-sm btn-danger open-modal" data-toggle="modal" data-target="#modalDelete" th:attr="data-id=*{codeSet}" >
                 <span class="glyphicon glyphicon-trash pull-left"></span>
                 <span style="padding-left: 5px">Delete</span>
+            </button>
+            <button type="submit" class="btn btn-sm btn-success">
+                <span class="glyphicon glyphicon-save pull-left"></span>
+                <span style="padding-left: 5px">Save</span>
             </button>
         </div>
 

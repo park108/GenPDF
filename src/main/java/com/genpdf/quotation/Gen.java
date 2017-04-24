@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import com.genpdf.common.Code;
-import com.genpdf.common.FormDao;
+import com.genpdf.common.FormComponent;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -24,12 +25,13 @@ import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.HorizontalAlignment;
 import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.image.Image;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class Gen {
 
-	public QuotationResponse generate(Form form, Code font, Quotation quotation) throws IOException {
+	public QuotationResponse generate(Form form, Map<String, FormComponent> componentMap, Code font, Quotation quotation) throws IOException {
 		
 		// Document 생성
 		PDDocument document = new PDDocument();
@@ -45,8 +47,11 @@ public class Gen {
 		PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
 		form.initialize(document, page, font);
-	    
+
+		float x = 0;
 	    float y = 0;
+	    float width = 0;
+		float height = 0;
 	    float textWidth = 0;
 	    
         String text;
@@ -59,154 +64,54 @@ public class Gen {
 	    // 행간 지정
 		contentStream.setLeading(20f);
 
-		// Logo 출력
-		y = form.getPageHeight() - form.getMarginTop();
-
-		String logoImagePath = form.getLogoImagePath();
-		URL logoImageUrl = getClass().getResource(logoImagePath);
-		System.out.println("Logo Image path = " + logoImageUrl.getPath());
-		Image imageLogo = new Image(ImageIO.read(new File(logoImageUrl.getPath())));
-
-		float logoHeight = 50;
-		float logoWidth = 100;
-
-		if(imageLogo.getHeight() > logoHeight) {
-			imageLogo = imageLogo.scaleByHeight(logoHeight);
-		}
-		if(imageLogo.getWidth() > logoWidth) {
-			imageLogo = imageLogo.scaleByWidth(logoWidth);
-		}
-
-		imageLogo.draw(document, contentStream, form.getMarginLeft(), y);
+		// Logo 이미지 출력
+		drawImage(document, contentStream, form, componentMap.get("LOGO"), form.getLogoImagePath());
 
 		// 타이틀 출력
-	    float titleHeight = form.getPageHeight() - form.getMarginTop() - (logoHeight - (form.getFontSizeTitle() / 2));
-		contentStream.beginText();
-		contentStream.setFont(form.getFontBold(), form.getFontSizeTitle());
-		text = quotation.getHeader().getTitle();
-		textWidth = (form.getFontBold().getStringWidth(text) / 1000.0f) * form.getFontSizeTitle();
-		contentStream.newLineAtOffset((form.getPageWidth() - textWidth) / 2, titleHeight);
-		contentStream.showText(text);
-		contentStream.endText();
+		drawText(contentStream, form, componentMap.get("TITL"), quotation.getHeader().getTitle(), form.getFontBold(), form.getFontSizeTitle());
 		
 		// 견적 번호 출력
-	    y = y - logoHeight - 15;
-	    		
-		contentStream.beginText();
-		contentStream.setFont(form.getFont(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(form.getMarginLeft(), y);
-		text = "No. " + quotation.getHeader().getQuotationNumber();
-		contentStream.showText(text);
-		contentStream.endText();
+		drawText(contentStream, form, componentMap.get("QTNO"), quotation.getHeader().getQuotationNumber(), form.getFont(), form.getFontSizeBody());
 		
 		// 날짜 출력
-		contentStream.beginText();
-		contentStream.setFont(form.getFont(), form.getFontSizeBody());
-		text = "" + quotation.getHeader().getDate();
-		textWidth = (form.getFont().getStringWidth(text) / 1000.0f) * form.getFontSizeBody();
-		
-		contentStream.newLineAtOffset(form.getPageWidth() - textWidth - form.getMarginRight(), y);
-		contentStream.showText(text);
-		contentStream.endText();
-		
+		drawText(contentStream, form, componentMap.get("DATE"), quotation.getHeader().getDate(), form.getFont(), form.getFontSizeBody());
+
+		// 주제 출력
+		drawText(contentStream, form, componentMap.get("SUBJ"), quotation.getHeader().getSubject(), form.getFontBold(), form.getFontSizeBody());
+
 		// 구분선 출력
-		y -= 8;
+		y = form.getPageHeight() - form.getMarginTop() - 73;
 		
 		contentStream.moveTo(form.getMarginLeft(), y);
 		contentStream.lineTo(form.getPageWidth() - form.getMarginRight(), y);
 		contentStream.stroke();
-		
-		// 주제 출력
-		y -= 15;
-		
-		contentStream.beginText();
-		contentStream.setFont(form.getFontBold(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(form.getMarginLeft(), y);
-		text = quotation.getHeader().getSubject();
-		contentStream.showText(text);
-		contentStream.endText();
-		
+
 		// 공급자 정보 출력
-		y = y - 30;
-		
-		contentStream.beginText();
-		contentStream.setFont(form.getFontBold(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(form.getMarginLeft(), y);
-		text = "공 급 자";
-		contentStream.showText(text);
-		contentStream.endText();
-		
-		contentStream.beginText();
-		contentStream.setFont(form.getFont(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(form.getMarginLeft(), y - 20);
-		text = quotation.getHeader().getSupplier().getName();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = quotation.getHeader().getSupplier().getAddress1();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = quotation.getHeader().getSupplier().getAddress2();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = "Phone: " + quotation.getHeader().getSupplier().getPhoneNumber();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = "Fax: " + quotation.getHeader().getSupplier().getFaxNumber();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = "Email: " + quotation.getHeader().getSupplier().getEmail();
-		contentStream.showText(text);
-		contentStream.endText();
-		
+		drawText(contentStream, form, componentMap.get("SUP0"), "공 급 자", form.getFontBold(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("SUP1"), quotation.getHeader().getSupplier().getName(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("SUP2"), quotation.getHeader().getSupplier().getAddress1(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("SUP3"), quotation.getHeader().getSupplier().getAddress2(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("SUP4"), quotation.getHeader().getSupplier().getPhoneNumber(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("SUP5"), quotation.getHeader().getSupplier().getFaxNumber(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("SUP6"), quotation.getHeader().getSupplier().getEmail(), form.getFont(), form.getFontSizeBody());
+
 		// 고객 정보 출력
-		contentStream.beginText();
-		contentStream.setFont(form.getFontBold(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(400, y);
-		text = "고 객";
-		contentStream.showText(text);
-		contentStream.endText();
+		drawText(contentStream, form, componentMap.get("CUS0"), "고 객", form.getFontBold(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("CUS1"), quotation.getHeader().getCustomer().getName(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("CUS2"), quotation.getHeader().getCustomer().getAddress1(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("CUS3"), quotation.getHeader().getCustomer().getAddress2(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("CUS4"), quotation.getHeader().getCustomer().getPhoneNumber(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("CUS5"), quotation.getHeader().getCustomer().getFaxNumber(), form.getFont(), form.getFontSizeBody());
+		drawText(contentStream, form, componentMap.get("CUS6"), quotation.getHeader().getCustomer().getEmail(), form.getFont(), form.getFontSizeBody());
 		
-		contentStream.beginText();
-		contentStream.setFont(form.getFont(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(400, y - 20);
-		text = quotation.getHeader().getCustomer().getName();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = quotation.getHeader().getCustomer().getAddress1();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = quotation.getHeader().getCustomer().getAddress2();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = "Phone: " + quotation.getHeader().getCustomer().getPhoneNumber();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = "Fax: " + quotation.getHeader().getCustomer().getFaxNumber();
-		contentStream.showText(text);
-		contentStream.newLine();
-		text = "Email: " + quotation.getHeader().getCustomer().getEmail();
-		contentStream.showText(text);
-		contentStream.endText();
-		
+		// 품목 상세 타이틀
+		drawText(contentStream, form, componentMap.get("TTTL"), "품목 상세", form.getFontBold(), form.getFontSizeBody());
+
+		// 품목 단위
+		drawText(contentStream, form, componentMap.get("TUNT"), "(단위: KRW)", form.getFont(), form.getFontSizeBody());
+
 		// 테이블 출력
-		y = 480;
-		
-		contentStream.beginText();
-		contentStream.setFont(form.getFontBold(), form.getFontSizeBody());
-		contentStream.newLineAtOffset(form.getMarginLeft(), y);
-		text = "품목 상세";
-		contentStream.showText(text);
-		contentStream.endText();
-		
-		contentStream.beginText();
-		contentStream.setFont(form.getFont(), form.getFontSizeBody());
-		text = "(단위: KRW)";
-		textWidth = (form.getFont().getStringWidth(text) / 1000.0f) * form.getFontSizeBody();
-		contentStream.newLineAtOffset(form.getPageWidth() - textWidth - form.getMarginRight(), y);
-		contentStream.showText(text);
-		contentStream.endText();
-		
-		y -= 10;
+		y = 470;
 	    float tableWidth = form.getPageWidth() - form.getMarginLeft() - form.getMarginRight();
 	    float colWidth[] = {15, 40, 12, 15, 18};
 	    table = new BaseTable(y, 100, form.getMarginBottom(), tableWidth, form.getMarginLeft(), document, page, true, true);
@@ -286,34 +191,11 @@ public class Gen {
 	    table.draw();
 		
 		// 서명 이미지 출력
-		String signImagePath = form.getSignImagePath();
-		URL signImageUrl = getClass().getResource(signImagePath);
-		System.out.println("Sign Image path = " + signImageUrl.getPath());
-		Image imageSign = new Image(ImageIO.read(new File(signImageUrl.getPath())));
+		drawImage(document, contentStream, form, componentMap.get("SIGN"), form.getSignImagePath());
 
-		float signHeight = 80;
-		float signWidth = 120;
-		if(imageSign.getHeight() > signHeight) {
-			imageSign = imageSign.scaleByHeight(signHeight);
-		}
-		if(imageSign.getWidth() > signWidth) {
-			imageSign = imageSign.scaleByWidth(signWidth);
-		}
-
-		y = 150 + (imageSign.getHeight() / 2);
-		imageSign.draw(document, contentStream, form.getPageWidth() - imageSign.getWidth() - form.getMarginRight(), y);
-	    
 	    // 대표이사명 출력
-	    y = 150;
-	    
-		contentStream.beginText();
-		contentStream.setFont(form.getFontBold(), form.getFontSizeBody());
-		text = quotation.getHeader().getManagerName();
-		textWidth = (form.getFontBold().getStringWidth(text) / 1000.0f) * form.getFontSizeBody();
-		contentStream.newLineAtOffset(form.getPageWidth() - textWidth - form.getMarginRight() - 100, y);
-		contentStream.showText(text);
-		contentStream.endText();
-		
+		drawText(contentStream, form, componentMap.get("APRV"), quotation.getHeader().getManagerName(), form.getFontBold(), form.getFontSizeBody());
+
 	    // 구분선 출력
 	    y = 120;
 	    
@@ -375,5 +257,100 @@ public class Gen {
 		info.setSubject(quotation.getHeader().getSubject());
 		info.setCreationDate(new GregorianCalendar());
 		info.setModificationDate(new GregorianCalendar());
+	}
+
+	private float getX(Form form, FormComponent component) {
+
+		float x = 0;
+
+		if(component.getxUnit().equals("pt")) {
+			x = form.getMarginLeft() + component.getX();
+		}
+		else if(component.getxUnit().equals("%")) {
+			float pageWidth = form.getPageWidth() - form.getMarginLeft() - form.getMarginRight();
+			x = pageWidth * component.getX() / 100;
+		}
+
+		return x;
+	}
+
+	private float getY(Form form, FormComponent component) {
+
+		float pageHeight = form.getPageHeight();
+		float y = pageHeight;
+		y -= form.getMarginTop();
+
+		if(component.getyUnit().equals("pt")) {
+			y -= component.getY();
+		}
+		else if(component.getyUnit().equals("%")) {
+			y -= pageHeight * component.getY() / 100;
+		}
+
+		return y;
+	}
+
+	private float getWidth(Form form, FormComponent component) {
+
+		float width = 0;
+
+		if(component.getWidthUnit().equals("pt")) {
+			width = component.getWidth();
+		}
+		else if(component.getWidthUnit().equals("%")) {
+			width = form.getPageWidth();
+			width -= form.getMarginLeft();
+			width -= form.getMarginRight();
+			width = width * component.getWidth() / 100;
+		}
+
+		return width;
+	}
+
+	private void drawText(PDPageContentStream stream, Form form, FormComponent component, String text, PDType0Font font, float fontSize) throws IOException {
+
+		if(component.getHide()) return;
+
+		float x = getX(form, component);
+		float y = getY(form, component);
+		float width = getWidth(form, component);
+
+		if(component.getAlign() == 'C') {
+			x += width / 2;
+			x -= ((font.getStringWidth(text) / 1000.0f) * fontSize) / 2;
+		}
+		else if(component.getAlign() == 'R') {
+			x += width;
+			x -= (font.getStringWidth(text) / 1000.0f) * fontSize;
+		}
+
+		stream.beginText();
+		stream.setFont(font, fontSize);
+		stream.newLineAtOffset(x, y);
+		stream.showText(text);
+		stream.endText();
+	}
+
+	private void drawImage(PDDocument document, PDPageContentStream stream, Form form, FormComponent component, String filePath) throws IOException {
+
+		if(component.getHide()) return;
+
+		float x = getX(form, component);
+		float y = getY(form, component);
+		float height = component.getHeight();
+		float width = component.getWidth();
+
+		URL url = getClass().getResource(filePath);
+		System.out.println("Image path = " + filePath);
+		Image image = new Image(ImageIO.read(new File(url.getPath())));
+
+		if(image.getWidth() > width) {
+			image = image.scaleByWidth(width);
+		}
+		if(image.getHeight() > height) {
+			image = image.scaleByHeight(height);
+		}
+
+		image.draw(document, stream, x, y);
 	}
 }
