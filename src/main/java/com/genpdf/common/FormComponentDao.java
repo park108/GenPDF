@@ -42,6 +42,8 @@ public class FormComponentDao {
                     , (String) map.get("code")
                     , (String) map.get("description")
                     , (Boolean) map.get("is_hide")
+                    , (String) map.get("area_type")
+                    , (String) map.get("component_type")
                     , (Float) map.get("x")
                     , (String) map.get("x_unit")
                     , (Float) map.get("y")
@@ -51,6 +53,9 @@ public class FormComponentDao {
                     , (Float) map.get("height")
                     , (String) map.get("height_unit")
                     , ((String) map.get("align")).toCharArray()[0]
+                    , (Boolean) map.get("is_bold")
+                    , (Boolean) map.get("is_italic")
+                    , (Float) map.get("font_size")
                     , (Integer) map.get("background_color_r")
                     , (Integer) map.get("background_color_g")
                     , (Integer) map.get("background_color_b")
@@ -80,6 +85,8 @@ public class FormComponentDao {
                     , (String) result.get("code")
                     , (String) result.get("description")
                     , (Boolean) result.get("is_hide")
+                    , (String) result.get("area_type")
+                    , (String) result.get("component_type")
                     , (Float) result.get("x")
                     , (String) result.get("x_unit")
                     , (Float) result.get("y")
@@ -89,6 +96,9 @@ public class FormComponentDao {
                     , (Float) result.get("height")
                     , (String) result.get("height_unit")
                     , ((String) result.get("align")).toCharArray()[0]
+                    , (Boolean) result.get("is_bold")
+                    , (Boolean) result.get("is_italic")
+                    , (Float) result.get("font_size")
                     , (Integer) result.get("background_color_r")
                     , (Integer) result.get("background_color_g")
                     , (Integer) result.get("background_color_b")
@@ -106,6 +116,8 @@ public class FormComponentDao {
         params.put("form_id", component.getFormId());
         params.put("code", component.getCode());
         params.put("description", component.getDescription());
+        params.put("area_type", component.getAreaType());
+        params.put("component_type", component.getComponentType());
         params.put("is_hide", component.getHide());
         params.put("x", component.getX());
         params.put("x_unit", component.getxUnit());
@@ -116,6 +128,9 @@ public class FormComponentDao {
         params.put("height", component.getHeight());
         params.put("height_unit", component.getHeightUnit());
         params.put("align", component.getAlign());
+        params.put("is_bold", component.getBold());
+        params.put("is_italic", component.getItalic());
+        params.put("font_size", component.getFontSize());
         params.put("background_color_r", component.getBackgroundColorR());
         params.put("background_color_g", component.getBackgroundColorG());
         params.put("background_color_b", component.getBackgroundColorB());
@@ -131,6 +146,8 @@ public class FormComponentDao {
                 "code = ?" +
                 ", description = ?" +
                 ", is_hide = ?" +
+                ", area_type = ?" +
+                ", component_type = ?" +
                 ", x = ?" +
                 ", x_unit = ?" +
                 ", y = ?" +
@@ -140,6 +157,9 @@ public class FormComponentDao {
                 ", height = ?" +
                 ", height_unit = ?" +
                 ", align = ?" +
+                ", is_bold = ?" +
+                ", is_italic = ?" +
+                ", font_size = ?" +
                 ", background_color_r = ?" +
                 ", background_color_g = ?" +
                 ", background_color_b = ?" +
@@ -149,6 +169,8 @@ public class FormComponentDao {
                 component.getCode()
                 , component.getDescription()
                 , component.getHide()
+                , component.getAreaType()
+                , component.getComponentType()
                 , component.getX()
                 , component.getxUnit()
                 , component.getY()
@@ -158,6 +180,9 @@ public class FormComponentDao {
                 , component.getHeight()
                 , component.getHeightUnit()
                 , component.getAlign()
+                , component.getBold()
+                , component.getItalic()
+                , component.getFontSize()
                 , component.getBackgroundColorR()
                 , component.getBackgroundColorG()
                 , component.getBackgroundColorB()

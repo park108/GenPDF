@@ -23,12 +23,6 @@ public class Form{
 	private String description;
 
 	private String fontCode;
-
-	private float fontSizeTitle;
-	private float fontSizeBody;
-	private float fontSizeTableHeader;
-	private float fontSizeTableBody;
-	private float fontSizeFooter;
 	
 	private float marginLeft;
 	private float marginRight;
@@ -50,7 +44,7 @@ public class Form{
 		super();
 	}
 
-	public Form(long id, String org, String docType, String description, String fontCode, float fontSizeTitle, float fontSizeBody, float fontSizeTableHeader, float fontSizeTableBody, float fontSizeFooter, float marginLeft, float marginRight, float marginBottom, float marginTop, String logoImagePath, String signImagePath) {
+	public Form(long id, String org, String docType, String description, String fontCode, float marginLeft, float marginRight, float marginBottom, float marginTop, String logoImagePath, String signImagePath) {
 
 		super();
 
@@ -59,11 +53,6 @@ public class Form{
 		this.docType = docType;
 		this.description = description;
 		this.fontCode = fontCode;
-		this.fontSizeTitle = fontSizeTitle;
-		this.fontSizeBody = fontSizeBody;
-		this.fontSizeTableHeader = fontSizeTableHeader;
-		this.fontSizeTableBody = fontSizeTableBody;
-		this.fontSizeFooter = fontSizeFooter;
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
 		this.marginBottom = marginBottom;
@@ -124,46 +113,6 @@ public class Form{
 
 	public void setFontBold(PDType0Font fontBold) {
 		this.fontBold = fontBold;
-	}
-
-	public float getFontSizeTitle() {
-		return fontSizeTitle;
-	}
-
-	public void setFontSizeTitle(float fontSizeTitle) {
-		this.fontSizeTitle = fontSizeTitle;
-	}
-
-	public float getFontSizeBody() {
-		return fontSizeBody;
-	}
-
-	public void setFontSizeBody(float fontSizeBody) {
-		this.fontSizeBody = fontSizeBody;
-	}
-
-	public float getFontSizeTableHeader() {
-		return fontSizeTableHeader;
-	}
-
-	public void setFontSizeTableHeader(float fontSizeTableHeader) {
-		this.fontSizeTableHeader = fontSizeTableHeader;
-	}
-
-	public float getFontSizeTableBody() {
-		return fontSizeTableBody;
-	}
-
-	public void setFontSizeTableBody(float fontSizeTableBody) {
-		this.fontSizeTableBody = fontSizeTableBody;
-	}
-
-	public float getFontSizeFooter() {
-		return fontSizeFooter;
-	}
-
-	public void setFontSizeFooter(float fontSizeFooter) {
-		this.fontSizeFooter = fontSizeFooter;
 	}
 
 	public float getPageWidth() {

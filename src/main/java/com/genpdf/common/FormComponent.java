@@ -19,6 +19,9 @@ public class FormComponent {
 
 	private Boolean isHide;
 
+	private String areaType;
+	private String componentType;
+
 	private float x;
 	private String xUnit;
 	private float y;
@@ -29,6 +32,9 @@ public class FormComponent {
 	private String heightUnit;
 
 	private char align;
+	private Boolean isBold;
+	private Boolean isItalic;
+	private float fontSize;
 
 	private int backgroundColorR;
 	private int backgroundColorG;
@@ -39,12 +45,14 @@ public class FormComponent {
 		super();
 	}
 
-	public FormComponent(long id, long formId, String code, String description, Boolean isHide, float x, String xUnit, float y, String yUnit, float width, String widthUnit, float height, String heightUnit, char align, int backgroundColorR, int backgroundColorG, int backgroundColorB) {
+	public FormComponent(long id, long formId, String code, String description, Boolean isHide, String areaType, String componentType, float x, String xUnit, float y, String yUnit, float width, String widthUnit, float height, String heightUnit, char align, Boolean isBold, Boolean isItalic, float fontSize, int backgroundColorR, int backgroundColorG, int backgroundColorB) {
 		this.id = id;
 		this.formId = formId;
 		this.code = code;
 		this.description = description;
 		this.isHide = isHide;
+		this.areaType = areaType;
+		this.componentType = componentType;
 		this.x = x;
 		this.xUnit = xUnit;
 		this.y = y;
@@ -54,6 +62,9 @@ public class FormComponent {
 		this.height = height;
 		this.heightUnit = heightUnit;
 		this.align = align;
+		this.isBold = isBold;
+		this.isItalic = isItalic;
+		this.fontSize = fontSize;
 		this.backgroundColorR = backgroundColorR;
 		this.backgroundColorG = backgroundColorG;
 		this.backgroundColorB = backgroundColorB;
@@ -97,6 +108,22 @@ public class FormComponent {
 
 	public void setHide(Boolean hide) {
 		isHide = hide;
+	}
+
+	public String getAreaType() {
+		return areaType;
+	}
+
+	public void setAreaType(String areaType) {
+		this.areaType = areaType;
+	}
+
+	public String getComponentType() {
+		return componentType;
+	}
+
+	public void setComponentType(String componentType) {
+		this.componentType = componentType;
 	}
 
 	public float getX() {
@@ -161,6 +188,30 @@ public class FormComponent {
 
 	public void setHeightUnit(String heightUnit) {
 		this.heightUnit = heightUnit;
+	}
+
+	public Boolean getBold() {
+		return isBold;
+	}
+
+	public void setBold(Boolean bold) {
+		isBold = bold;
+	}
+
+	public Boolean getItalic() {
+		return isItalic;
+	}
+
+	public void setItalic(Boolean italic) {
+		isItalic = italic;
+	}
+
+	public float getFontSize() {
+		return fontSize;
+	}
+
+	public void setFontSize(float fontSize) {
+		this.fontSize = fontSize;
 	}
 
 	public char getAlign() {

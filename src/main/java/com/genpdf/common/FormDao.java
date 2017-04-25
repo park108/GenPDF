@@ -44,11 +44,6 @@ public class FormDao {
                     , (String) map.get("doc_type")
                     , (String) map.get("description")
                     , (String) map.get("font_code")
-                    , (Float) map.get("font_size_title")
-                    , (Float) map.get("font_size_body")
-                    , (Float) map.get("font_size_table_header")
-                    , (Float) map.get("font_size_table_body")
-                    , (Float) map.get("font_size_footer")
                     , (Float) map.get("margin_left")
                     , (Float) map.get("margin_right")
                     , (Float) map.get("margin_bottom")
@@ -81,11 +76,6 @@ public class FormDao {
                     , (String) result.get("doc_type")
                     , (String) result.get("description")
                     , (String) result.get("font_code")
-                    , (Float) result.get("font_size_title")
-                    , (Float) result.get("font_size_body")
-                    , (Float) result.get("font_size_table_header")
-                    , (Float) result.get("font_size_table_body")
-                    , (Float) result.get("font_size_footer")
                     , (Float) result.get("margin_left")
                     , (Float) result.get("margin_right")
                     , (Float) result.get("margin_bottom")
@@ -107,11 +97,6 @@ public class FormDao {
         params.put("doc_type", form.getDocType());
         params.put("description", form.getDescription());
         params.put("font_code", form.getFontCode());
-        params.put("font_size_title", form.getFontSizeTitle());
-        params.put("font_size_body", form.getFontSizeBody());
-        params.put("font_size_table_header", form.getFontSizeTableHeader());
-        params.put("font_size_table_body", form.getFontSizeTableBody());
-        params.put("font_size_footer", form.getFontSizeFooter());
         params.put("margin_bottom", form.getMarginBottom());
         params.put("margin_top", form.getMarginTop());
         params.put("margin_left", form.getMarginLeft());
@@ -131,11 +116,6 @@ public class FormDao {
                 ", doc_type = ?" +
                 ", description = ?" +
                 ", font_code = ?" +
-                ", font_size_title = ?" +
-                ", font_size_body = ?" +
-                ", font_size_table_header = ?" +
-                ", font_size_table_body = ?" +
-                ", font_size_footer = ?" +
                 ", margin_left = ?" +
                 ", margin_right = ?" +
                 ", margin_bottom = ?" +
@@ -149,11 +129,6 @@ public class FormDao {
                 , form.getDocType()
                 , form.getDescription()
                 , form.getFontCode()
-                , form.getFontSizeTitle()
-                , form.getFontSizeBody()
-                , form.getFontSizeTableHeader()
-                , form.getFontSizeTableBody()
-                , form.getFontSizeFooter()
                 , form.getMarginLeft()
                 , form.getMarginRight()
                 , form.getMarginBottom()
