@@ -40,6 +40,7 @@ public class FormComponentDao {
                     (Integer) map.get("id")
                     , (Integer) map.get("form_id")
                     , (String) map.get("code")
+                    , (String) map.get("parent_code")
                     , (String) map.get("description")
                     , (Boolean) map.get("is_hide")
                     , (String) map.get("area_type")
@@ -83,6 +84,7 @@ public class FormComponentDao {
                     id
                     , (Integer) result.get("form_id")
                     , (String) result.get("code")
+                    , (String) result.get("parent_code")
                     , (String) result.get("description")
                     , (Boolean) result.get("is_hide")
                     , (String) result.get("area_type")
@@ -115,6 +117,7 @@ public class FormComponentDao {
         final Map<String, Object> params = new HashMap<>();
         params.put("form_id", component.getFormId());
         params.put("code", component.getCode());
+        params.put("parent_code", component.getParentCode());
         params.put("description", component.getDescription());
         params.put("area_type", component.getAreaType());
         params.put("component_type", component.getComponentType());
@@ -144,6 +147,7 @@ public class FormComponentDao {
 
         String sql = "UPDATE form_component SET " +
                 "code = ?" +
+                ", parent_code = ?" +
                 ", description = ?" +
                 ", is_hide = ?" +
                 ", area_type = ?" +
@@ -167,6 +171,7 @@ public class FormComponentDao {
 
         Object[] params = new Object[] {
                 component.getCode()
+                , component.getParentCode()
                 , component.getDescription()
                 , component.getHide()
                 , component.getAreaType()

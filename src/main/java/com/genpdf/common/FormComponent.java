@@ -14,6 +14,7 @@ public class FormComponent {
 
 	private long formId;
 	private String code;
+	private String parentCode;
 
 	private String description;
 
@@ -45,10 +46,11 @@ public class FormComponent {
 		super();
 	}
 
-	public FormComponent(long id, long formId, String code, String description, Boolean isHide, String areaType, String componentType, float x, String xUnit, float y, String yUnit, float width, String widthUnit, float height, String heightUnit, char align, Boolean isBold, Boolean isItalic, float fontSize, int backgroundColorR, int backgroundColorG, int backgroundColorB) {
+	public FormComponent(long id, long formId, String code, String parentCode, String description, Boolean isHide, String areaType, String componentType, float x, String xUnit, float y, String yUnit, float width, String widthUnit, float height, String heightUnit, char align, Boolean isBold, Boolean isItalic, float fontSize, int backgroundColorR, int backgroundColorG, int backgroundColorB) {
 		this.id = id;
 		this.formId = formId;
 		this.code = code;
+		this.parentCode = parentCode;
 		this.description = description;
 		this.isHide = isHide;
 		this.areaType = areaType;
@@ -92,6 +94,14 @@ public class FormComponent {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
 	}
 
 	public String getDescription() {

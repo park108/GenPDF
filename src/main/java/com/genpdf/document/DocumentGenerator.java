@@ -52,38 +52,37 @@ public class DocumentGenerator extends Gen {
 		// Header, Body 컨텐츠 생성
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
+		float tablePosition = 0;
+
 		// Header, Body 컨텐츠 추가
 		PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
 		// Header, Body 컨텐츠 그리기
 		for(FormComponent component : componentList) {
 
-			if("HEAD".equals(component.getAreaType()) || "BODY".equals(component.getAreaType())) {
+			Object data = req.getData(component.getCode());
 
-				if("IMG".equals(component.getComponentType())) {
+			if(null != data && "HEAD".equals(component.getAreaType()) || "BODY".equals(component.getAreaType())) {
+
+				if ("IMG".equals(component.getComponentType())) {
 
 					// TODO: 이미지 경로를 component 속성으로 옮겨야 함
 					drawImage(document, contentStream, form, component, form.getLogoImagePath());
 				}
-
-				else if("TEXT".equals(component.getComponentType())) {
-
+				else if ("TEXT".equals(component.getComponentType())) {
 					drawText(contentStream, form, component, (String) req.getData(component.getCode()));
 				}
-
-				else if("LIST".equals(component.getComponentType())) {
+				else if ("LIST".equals(component.getComponentType())) {
 					drawTextList(contentStream, form, component, req.getList(component.getCode()));
 				}
-
-				else if("LINE".equals(component.getComponentType())) {
-
+				else if ("LINE".equals(component.getComponentType())) {
 					drawLine(contentStream, form, component);
+				}
+				else if ("TABL".equals(component.getComponentType())) {
+					tablePosition = drawTable(document, document.getPage(0), form, component, componentList, req);
 				}
 			}
 		}
-
-		// 테이블 출력
-		// TODO: 나중에 개발
 
 	    // Header, Body 컨텐츠 닫기
 		contentStream.close();
@@ -94,18 +93,18 @@ public class DocumentGenerator extends Gen {
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Footer 영역이 부족할 경우 Page Breaking
-//		float footerHeight = form.getPageHeight() - form.getMarginTop() - form.getMarginBottom() - 550;
-//		float remainHeight = tablePosition - footerHeight;
+		float footerHeight = form.getPageHeight() - form.getMarginTop() - form.getMarginBottom() - 550;
+		float remainHeight = tablePosition - footerHeight;
 
 		PDPage footerPage;
 
-//		if(0 > remainHeight) {
-//			footerPage = new PDPage();
-//			document.addPage(footerPage);
-//		}
-//		else {
+		if(0 > remainHeight) {
+			footerPage = new PDPage();
+			document.addPage(footerPage);
+		}
+		else {
 			footerPage = document.getPage(document.getNumberOfPages() - 1);
-//		}
+		}
 
 		// Footer 컨텐츠 생성
 		PDPageContentStream footerStream = new PDPageContentStream(document, footerPage, PDPageContentStream.AppendMode.APPEND, false);
@@ -114,25 +113,22 @@ public class DocumentGenerator extends Gen {
 		// Footer 컨텐츠 그리기
 		for(FormComponent component : componentList) {
 
-			if("FOOT".equals(component.getAreaType())) {
+			Object data = req.getData(component.getCode());
 
-				if("IMG".equals(component.getComponentType())) {
+			if(null != data && "FOOT".equals(component.getAreaType())) {
+
+				if ("IMG".equals(component.getComponentType())) {
 
 					// TODO: 이미지 경로를 component 속성으로 옮겨야 함
 					drawImage(document, footerStream, form, component, form.getSignImagePath());
 				}
-
-				else if("TEXT".equals(component.getComponentType())) {
-
-					drawText(footerStream, form, component, (String) req.getData(component.getCode()));
+				else if ("TEXT".equals(component.getComponentType())) {
+					drawText(footerStream, form, component, (String) data);
 				}
-
-				else if("LIST".equals(component.getComponentType())) {
+				else if ("LIST".equals(component.getComponentType())) {
 					drawTextList(footerStream, form, component, req.getList(component.getCode()));
 				}
-
-				else if("LINE".equals(component.getComponentType())) {
-
+				else if ("LINE".equals(component.getComponentType())) {
 					drawLine(footerStream, form, component);
 				}
 			}

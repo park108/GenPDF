@@ -38,10 +38,6 @@ public class DocumentRequest extends GenRequest {
 			}
 		}
 
-		if(null == data) {
-			data = "";
-		}
-
 		return data;
 	}
 

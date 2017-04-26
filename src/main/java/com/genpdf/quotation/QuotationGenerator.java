@@ -123,6 +123,11 @@ public class QuotationGenerator extends Gen {
 		drawText(contentStream, form, componentMap.get("TUNT"), "(단위: KRW)");
 
 		// 테이블 출력
+		// Table(TABL): x, y, width
+		// Row header(TRHD): Column count, height
+		// Row body(TRBD): Column count, height
+		// Row footer(TRFT): Column count, height
+		// Cell: Column index, width, font, fontSize, backgroundColor, value
 		float y = 470;
 	    float tableWidth = form.getPageWidth() - form.getMarginLeft() - form.getMarginRight();
 	    float colWidth[] = {15, 40, 12, 15, 18};

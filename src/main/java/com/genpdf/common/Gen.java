@@ -1,16 +1,24 @@
 package com.genpdf.common;
 
+import be.quodlibet.boxable.BaseTable;
+import be.quodlibet.boxable.Cell;
+import be.quodlibet.boxable.HorizontalAlignment;
+import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.image.Image;
+import com.genpdf.document.DocumentRequest;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 
 public class Gen {
@@ -26,7 +34,7 @@ public class Gen {
 		info.setModificationDate(new GregorianCalendar());
 	}
 
-	protected float getX(Form form, FormComponent component) {
+	private float getX(Form form, FormComponent component) {
 
 		float x = 0;
 
@@ -41,7 +49,7 @@ public class Gen {
 		return x;
 	}
 
-	protected float getY(Form form, FormComponent component) {
+	private float getY(Form form, FormComponent component) {
 
 		float pageHeight = form.getPageHeight();
 		float y = pageHeight;
@@ -57,7 +65,24 @@ public class Gen {
 		return y;
 	}
 
-	protected float getWidth(Form form, FormComponent component) {
+	private float calcTextXbyAlign(float x, float width, float stringWidth, float fontSize, char align) {
+
+		if('L' == align) {
+
+		}
+		else if('C' == align) {
+			x += width / 2;
+			x -= ((stringWidth / 1000.0f) * fontSize) / 2;
+		}
+		else if('R' == align) {
+			x += width;
+			x -= (stringWidth / 1000.0f) * fontSize;
+		}
+
+		return x;
+	}
+
+	private float getWidth(Form form, FormComponent component) {
 
 		float width = 0;
 
@@ -74,7 +99,7 @@ public class Gen {
 		return width;
 	}
 
-	protected float getHeight(Form form, FormComponent component) {
+	private float getHeight(Form form, FormComponent component) {
 
 		float height = 0;
 
@@ -91,7 +116,7 @@ public class Gen {
 		return height;
 	}
 
-	protected float drawLine(PDPageContentStream stream, Form form, FormComponent component) throws IOException {
+	protected void drawLine(PDPageContentStream stream, Form form, FormComponent component) throws IOException {
 
 		float x = getX(form, component);
 		float y = getY(form, component);
@@ -104,11 +129,9 @@ public class Gen {
 			stream.lineTo(toX, toY);
 			stream.stroke();
 		}
-
-		return y > toY ? y : toY;
 	}
 
-	protected float drawText(PDPageContentStream stream, Form form, FormComponent component, String text) throws IOException {
+	protected void drawText(PDPageContentStream stream, Form form, FormComponent component, String text) throws IOException {
 
 		PDType0Font font = component.getBold() ? form.getFontBold() : form.getFont();
 		font.getFontDescriptor().setItalic(component.getItalic());
@@ -122,13 +145,7 @@ public class Gen {
 
 		if(!component.getHide()) {
 
-			if (component.getAlign() == 'C') {
-				x += width / 2;
-				x -= ((font.getStringWidth(text) / 1000.0f) * fontSize) / 2;
-			} else if (component.getAlign() == 'R') {
-				x += width;
-				x -= (font.getStringWidth(text) / 1000.0f) * fontSize;
-			}
+			x = calcTextXbyAlign(x, width, font.getStringWidth(text), fontSize, component.getAlign());
 
 			stream.beginText();
 			stream.setFont(font, fontSize);
@@ -136,8 +153,6 @@ public class Gen {
 			stream.showText(text);
 			stream.endText();
 		}
-
-		return y + fontSize;
 	}
 
 	protected void drawTextList(PDPageContentStream stream, Form form, FormComponent component, ArrayList<String> texts) throws IOException {
@@ -165,14 +180,7 @@ public class Gen {
 			float y = getY(form, component);
 			float width = getWidth(form, component);
 
-			if(component.getAlign() == 'C') {
-				x += width / 2;
-				x -= ((font.getStringWidth(text) / 1000.0f) * fontSize) / 2;
-			}
-			else if(component.getAlign() == 'R') {
-				x += width;
-				x -= (font.getStringWidth(text) / 1000.0f) * fontSize;
-			}
+			x = calcTextXbyAlign(x, width, font.getStringWidth(text), fontSize, component.getAlign());
 
 			stream.beginText();
 			stream.setFont(font, fontSize);
@@ -205,5 +213,155 @@ public class Gen {
 		}
 
 		image.draw(document, stream, x, y);
+	}
+
+	protected float drawTable(PDDocument document, PDPage page, Form form, FormComponent tableComponent, ArrayList<FormComponent> componentList, DocumentRequest req) throws IOException {
+
+
+		float x = getX(form, tableComponent);
+		float y = getY(form, tableComponent);
+		float width = getWidth(form, tableComponent);
+
+		if(tableComponent.getHide()) return y;
+
+		// TODO: Footer Size 관리 및 등록
+		BaseTable table = new BaseTable(y, form.getPageHeight() - form.getMarginTop() - 100
+				, form.getMarginBottom(), width, x, document, page, true, true);
+
+		// Header, Body, Footer Row Component 추출
+		FormComponent headerRowComponent = null;
+		FormComponent bodyRowComponent = null;
+		FormComponent footerRowComponent = null;
+
+		for(FormComponent row : componentList) {
+
+			if("TRHD".equals(row.getComponentType()) && row.getParentCode().equals(tableComponent.getCode())) {
+				headerRowComponent = row;
+			}
+
+			else if("TRBD".equals(row.getComponentType()) && row.getParentCode().equals(tableComponent.getCode())) {
+				bodyRowComponent = row;
+			}
+
+			else if("TRFT".equals(row.getComponentType()) && row.getParentCode().equals(tableComponent.getCode())) {
+				footerRowComponent = row;
+			}
+		}
+
+		// Header, Body, Footer Column Component 추출
+		ArrayList<FormComponent> headerColsComponentList = new ArrayList<>();
+		ArrayList<FormComponent> bodyColsComponentList = new ArrayList<>();
+		ArrayList<FormComponent> footerColsComponentList = new ArrayList<>();
+
+		for(FormComponent column : componentList) {
+
+			if("TCOL".equals(column.getComponentType())) {
+
+				if (null != headerRowComponent && column.getParentCode().equals(headerRowComponent.getCode())) {
+					headerColsComponentList.add(column);
+				}
+
+				else if (null != bodyRowComponent && column.getParentCode().equals(bodyRowComponent.getCode())) {
+					bodyColsComponentList.add(column);
+				}
+
+				else if (null != footerRowComponent && column.getParentCode().equals(footerRowComponent.getCode())) {
+					footerColsComponentList.add(column);
+				}
+			}
+		}
+
+		Ascending ascending = new Ascending();
+		headerColsComponentList.sort(ascending);
+		bodyColsComponentList.sort(ascending);
+		footerColsComponentList.sort(ascending);
+
+		// Header Row 생성
+		if(null != headerRowComponent) {
+
+			Row<PDPage> headerRow = table.createRow(headerRowComponent.getHeight());
+
+			for (FormComponent headerCol : headerColsComponentList) {
+
+				createCell(form, headerCol, headerRow, (String) req.getData(headerCol.getCode()));
+			}
+
+			table.addHeaderRow(headerRow);
+		}
+
+		// Body Row 생성
+		if(null != bodyRowComponent) {
+
+			int rowCount = Integer.parseInt((String) req.getData(bodyRowComponent.getCode()));
+
+			for(int i = 0; i < rowCount; i++) {
+
+				Row<PDPage> bodyRow = table.createRow(bodyRowComponent.getHeight());
+
+				for (FormComponent bodyCol : bodyColsComponentList) {
+
+					String cellText = "";
+
+					try {
+						cellText = (String) req.getList(bodyCol.getCode()).get(i);
+					}
+					catch(IndexOutOfBoundsException e) {
+						System.out.println("Missing Data(row: " + i + ", col: " + bodyCol.getX() + ")");
+					}
+
+					createCell(form, bodyCol, bodyRow, cellText);
+				}
+			}
+		}
+
+		// Footer Row 생성
+		if(null != footerRowComponent) {
+
+			Row<PDPage> footerRow = table.createRow(footerRowComponent.getHeight());
+
+			for(FormComponent footerCol : footerColsComponentList) {
+
+				createCell(form, footerCol, footerRow, (String) req.getData(footerCol.getCode()));
+			}
+		}
+
+		return table.draw();
+	}
+
+	private void createCell(Form form, FormComponent col, Row<PDPage> row, String text) {
+
+		Cell<PDPage> cell = row.createCell(col.getWidth(), text);
+
+		if('L' == col.getAlign()) {
+			cell.setAlign(HorizontalAlignment.LEFT);
+		}
+		else if('C' == col.getAlign()) {
+			cell.setAlign(HorizontalAlignment.CENTER);
+		}
+		else if('R' == col.getAlign()) {
+			cell.setAlign(HorizontalAlignment.RIGHT);
+		}
+
+		cell.setFont(col.getBold() ? form.getFontBold() : form.getFont());
+		cell.setFillColor(new Color(col.getBackgroundColorR(), col.getBackgroundColorG(), col.getBackgroundColorB()));
+		cell.setFontSize(col.getFontSize());
+	}
+
+	// 내림차순
+	class Descending implements Comparator<FormComponent> {
+
+		@Override
+		public int compare(FormComponent o1, FormComponent o2) {
+			return Float.compare(o2.getX(), o1.getX());
+		}
+	}
+
+	// 오름차순
+	class Ascending implements Comparator<FormComponent> {
+
+		@Override
+		public int compare(FormComponent o1, FormComponent o2) {
+			return Float.compare(o1.getX(), o2.getX());
+		}
 	}
 }
